@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ITPs Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <link rel="stylesheet" href="css/font-awesome.css" >
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <link rel="stylesheet" href="css/leaflet-sidebar.css" />
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-multiselect.min.css" />
+    <link rel="stylesheet" href="css/Loading.css" />
+    <link rel="stylesheet" href="app/app.css" />
+</head>
+<body>
+    <!-- optionally define the sidebar content via HTML markup -->
+    <div id="sidebar" class="leaflet-sidebar collapsed" style="z-index: 999;">
+
+        <!-- nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <!-- top aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-globe active"></i></a></li>
+                <li><a href="#about" role="tab"><i class="fa fa-info"></i></a></li>
+                <li><a href="#help" role="tab"><i class="fa fa-question"></i></a></li>
+            </ul>
+
+            <!-- bottom aligned tabs -->
+            <ul role="tablist">
+                <li><a href="ccgeo.info" target="blank"><img src="images/ccgeo_logo.png" width="25" height="25" /></a></li>
+            </ul>
+        </div>
+
+        <!-- panel content -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="home">
+                <h1 class="leaflet-sidebar-header">
+                    ITPs Map
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                
+                <form id="filter">
+                    <fieldset class="filter-border">
+                        <legend class="filter-border">Dispaly Options</legend>
+                        <div class="form-group">
+                            <label for="base_map">Base Map</label>
+                            <select id="base_map" class="form-control">
+                                <option value="googleHybrid">Google Hybrid</option>
+                                <option value="googleSat">Google Sattelite</option>
+                                <option value="osm">Open Street Map</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="layers">Layers</label>
+                            <select id="layers" multiple="multiple" class="form-control">
+                                <optgroup label="Trees" class="group-1">
+                                    <option value="Falcata">Falcata</option>
+                                    <option value="Gmelina">Gmelina</option>
+                                    <option value="Mangium">Mangium</option>
+                                    <option value="Bagras">Bagras</option>
+                                </optgroup>
+                                <optgroup label="Administrative Boundaries" class="group-2">
+                                    <option value="Barangay">Barangay</option>
+                                    <option value="CtyMun">City/Municipality</option>
+                                    <option value="Province">Province</option>
+                                </optgroup>
+                                <optgroup label="Others" class="group-3">
+                                    <option value="roadNet">Road Network</option>
+                                    <option value="fvp">Field Validation Points</option>
+                                    <option value="uas">UAS Orthoimages</option>
+                                    <option value="wpp">Wood Processing Plant</option>
+                                    <option value="furniture">Furniture Store</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <form id="filter1">
+                    <fieldset class="filter-border">
+                        <legend class="filter-border">Filter Options</legend>
+                        <div class="form-group">
+                            <label for="trees">Trees</label>
+                            <select id="trees" class="form-control">
+                                <option value="Falcata">Falcata</option>
+                                <option value="Gmelina">Gmelina</option>
+                                <option value="Mangium">Mangium</option>
+                                <option value="Bagras">Bagras</option>                          
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prov">Location</label>
+                            <select id="prov" class="form-control">
+                                <option value="">Select Province</option>
+                                <option value="agnor">Agusan del Norte</option>
+                                <option value="agsur">Agusan del Sur</option>
+                                <option value="dinagat">Dinagat Islands</option>
+                                <option value="surnor">Surigao del Norte</option>
+                                <option value="sursur">Surigao del Sur</option>                          
+                            </select>
+                            <br/>
+                            <select id="citymun" class="form-control">
+                                <option value="">Select Province First</option>                     
+                            </select>
+                             <br/>
+                            <select id="brgy" class="form-control">
+                                <option value="">Select City/Municipality First</option>                     
+                            </select>
+                        </div>
+                    </fieldset>
+                </form>              
+            </div> <!--enf of home-->
+
+            <div class="leaflet-sidebar-pane" id="about">
+                <h1 class="leaflet-sidebar-header">
+                    About
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                <p>
+                    “ITPS Mapping Project”, is one of the component projects of a Grant-In-Aid (GIA) program funded by the Department of Science and Technology (DOST) under its Niche Centers in the Region (NICER) Program for the establishment of the Industrial Tree Plantation Species Research and Innovation Center. The NICER is a component of DOST’s Science for Change Program (S4CP) launched in 2017 which aims to spur S&T-based sustainable development by establishing research and innovation centers in the regions for its key commodity or service to become its niche.
+                </p>
+                <p>
+                    The ITP Mapping Project, which will be headed by the current CCGeo Director, Engr. Jojene R. Santillan as Project Leader, aims to address the limited availability of spatial information about ITPs in the regions, making it difficult to understand many relevant questions such as:
+                </p>   
+                <blockquote>
+                    <ul>
+                        <li>Where are the ITPs located in Caraga Region? What are the extents of these ITPs?</li>
+                        <li>What ITP species are currently planted?</li>
+                        <li>Are there areas available for establishing new ITPs?</li>
+                        <li>Where are the processing plants currently located? </li>
+                        <li>How efficient are these processing plants in log production?</li>
+                        <li>Where should we establish processing plants to ensure efficient log production?</li>
+                    </ul>
+                       
+                </blockquote>   
+                <p>
+                    Obtaining the above information and integrating it with other datasets is valuable for efficient management and monitoring of ITPs in the region. It can also be used for market projections, economic forecast models in relation to climate change scenarios, and for other purposes requiring wood industry-based information. On the other hand, monitoring the extent of ITPs is critical for understanding environmental and socioeconomic impacts.
+                </p>
+            </div> <!--end of about-->
+
+            <div class="leaflet-sidebar-pane" id="help">
+                <h1 class="leaflet-sidebar-header">
+                    Help
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                <p>
+                    
+                </p>
+            </div> <!--end of help-->
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+      <!--LOADING MODAL-->
+    <div class="modal fade" role="dialog"  id="loadMe" data-backdrop="static">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div id="loaderWrap">
+                <div class="spinner-grow text-primary ml-auto" style="width: 5rem; height: 5rem;" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <strong><p>Loading...please wait.</p></strong>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    </div>
+
+    <div class="modal fade" role="dialog"  id="chartMe" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <canvas id="myChart" width="600" height="450"></canvas>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+            </div>
+            
+        </div>
+        </div>
+  
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap-multiselect.min.js"></script>
+    <script src="leaflet/leaflet.js"></script>
+    <script src="js/leaflet-sidebar.js"></script>
+    <script src="js/Leaflet.VectorGrid.bundled.js"></script>
+    <script src="js/L.Loading.js"></script>
+    <script src="js/shp.min.js"></script>
+    <script src="js/leaflet.shpfile.js"></script>
+    <script src="js/leaflet-omnivore.min.js"></script>
+    <script src="js/leaflet-pip.min.js"></script>
+    <script src="js/Chart.min.js"></script>
+    <script src="app/app.js"></script>
+</body>
+</html>
