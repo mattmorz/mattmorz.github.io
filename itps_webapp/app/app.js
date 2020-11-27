@@ -1,8 +1,8 @@
 var LAYERS = [];
-const BAGRAS_GEOJSON = "https://mattmorz.github.io/itps_webapp/data/RescaledRefinedBagras_CaragaRegion.json";
-const MANGIUM_GEOJSON = "https://mattmorz.github.io/itps_webapp/data/RescaledRefinedMangium_CaragaRegion.json";
-const GMELINA_GEOJSON = "https://mattmorz.github.io/itps_webapp/data/RescaledRefinedGmelina_CaragaRegion.json";
-const FALCATA_GEOJSON = "https://mattmorz.github.io/itps_webapp/data/RescaledRefinedFalcata_CaragaRegion.json";
+const BAGRAS_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedBagras_CaragaRegion.json";
+const MANGIUM_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedMangium_CaragaRegion.json";
+const GMELINA_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedGmelina_CaragaRegion.json";
+const FALCATA_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedFalcata_CaragaRegion.json";
 const BRGY_JSON = "https://mattmorz.github.io/itps_webapp/data/Falcata_Stats_BrgyLevel.json";
 
 const FALCATA_SHP = "http://127.0.0.1/itps_webapp//data/RescaledRefinedFalcata_CaragaRegion.zip";
