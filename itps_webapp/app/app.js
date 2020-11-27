@@ -354,11 +354,6 @@ function addStatsByBrgy(){
             alert('Changed option ' + $(option).val() + '.');
         }
     });
-    
-    var shpfile = new L.Shapefile(FALCATA_SHP,function(data){
-        console.log(data)
-    });
-   
     //END LAYERS
 
    
