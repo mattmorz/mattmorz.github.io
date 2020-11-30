@@ -44,25 +44,25 @@ var LAYERS = [];
 var coverage_type = null;
 
 //GEOJSON FILES, EPSG:32651 coverted to EPSG:4321 for Web Display
-const BAGRAS_GEOJSON = "http://127.0.0.1/itps_webapp/data/RescaledRefinedBagras_CaragaRegion.json";
-const MANGIUM_GEOJSON = "http://127.0.0.1/itps_webapp/data/RescaledRefinedMangium_CaragaRegion.json";
-const GMELINA_GEOJSON = "http://127.0.0.1/itps_webapp/data/RescaledRefinedGmelina_CaragaRegion.json";
-const FALCATA_GEOJSON = "http://127.0.0.1/itps_webapp/data/RescaledRefinedFalcata_CaragaRegion.json";
+const BAGRAS_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedBagras_CaragaRegion.json";
+const MANGIUM_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedMangium_CaragaRegion.json";
+const GMELINA_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedGmelina_CaragaRegion.json";
+const FALCATA_GEOJSON = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/RescaledRefinedFalcata_CaragaRegion.json";
 
-const BRGY_FALCATA = "http://127.0.0.1/itps_webapp/data/Falcata_Stats_BrgyLevel.json";
-const BRGY_GMELINA = "http://127.0.0.1/itps_webapp/data/Gmelina_Stats_BrgyLevel.json";
-const BRGY_MANGIUM = "http://127.0.0.1/itps_webapp/data/Mangium_Stats_BrgyLevel.json";
-const BRGY_BAGRAS = "http://127.0.0.1/itps_webapp/data/Bagras_Stats_BrgyLevel.json";
+const BRGY_FALCATA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Falcata_Stats_BrgyLevel.json";
+const BRGY_GMELINA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Gmelina_Stats_BrgyLevel.json";
+const BRGY_MANGIUM = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Mangium_Stats_BrgyLevel.json";
+const BRGY_BAGRAS = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Bagras_Stats_BrgyLevel.json";
 
-const MUN_FALCATA = "http://127.0.0.1/itps_webapp/data/Falcata_Stats_MunLevel.json";
-const MUN_GMELINA = "http://127.0.0.1/itps_webapp/data/Gmelina_Stats_MunLevel.json";
-const MUN_MANGIUM = "http://127.0.0.1/itps_webapp/data/Mangium_Stats_MunLevel.json";
-const MUN_BAGRAS = "http://127.0.0.1/itps_webapp/data/Bagras_Stats_MunLevel.json";
+const MUN_FALCATA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Falcata_Stats_MunLevel.json";
+const MUN_GMELINA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Gmelina_Stats_MunLevel.json";
+const MUN_MANGIUM = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Mangium_Stats_MunLevel.json";
+const MUN_BAGRAS = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Bagras_Stats_MunLevel.json";
 
-const PROV_FALCATA = "http://127.0.0.1/itps_webapp/data/Falcata_Stats_ProvLevel.json";
-const PROV_GMELINA = "http://127.0.0.1/itps_webapp/data/Gmelina_Stats_ProvLevel.json";
-const PROV_MANGIUM = "http://127.0.0.1/itps_webapp/data/Mangium_Stats_ProvLevel.json";
-const PROV_BAGRAS = "http://127.0.0.1/itps_webapp/data/Bagras_Stats_ProvLevel.json";
+const PROV_FALCATA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Falcata_Stats_ProvLevel.json";
+const PROV_GMELINA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Gmelina_Stats_ProvLevel.json";
+const PROV_MANGIUM = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Mangium_Stats_ProvLevel.json";
+const PROV_BAGRAS = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Bagras_Stats_ProvLevel.json";
 
 // standard leaflet map setup
 var map = L.map('map');
