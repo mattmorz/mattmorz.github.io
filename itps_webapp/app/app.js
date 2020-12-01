@@ -1,4 +1,11 @@
-var LAYERS = [];
+
+
+/**
+ * Coded by idsilmat@gmail.com
+ * 12.1.2020
+ **/
+
+ var LAYERS = [];
 var coverage_type = null;
 
 //GEOJSON FILES, EPSG:32651 coverted to EPSG:4321 for Web Display
@@ -892,7 +899,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 var layerName = layerAddText+'_'+layerAddDataSection[2];
                 var treeName = layerAddDataSection[2];
                 if(activeStatsLayer == null){
-                    activeStatsLayer = 'Nothing'
+                    activeStatsLayer = layerName
                 }
                 if(activeTreeName == null){
                     activeTreeName = 'Nothing'
@@ -939,11 +946,11 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
 
               
 
-                if(coverage_type != layerAddText && layerName !=activeStatsLayer){
+                if((coverage_type != layerAddText || layerName !=activeStatsLayer) && !LAYERS.includes(layerName)){
                     toogleAreaStats = false;
                 }
 
-                if(layerName !=activeStatsLayer && treeName !=activeTreeName && !LAYERS.includes(layerName) && coverage_type != layerAddText){
+                if(layerName !=activeStatsLayer && treeName !=activeTreeName && !LAYERS.includes(layerName)){
                     toogleAreaStatsByBrgy = false;
                     toogleAreaStatsByMun = false;
                     toogleAreaStatsByMProv = false;
@@ -959,31 +966,35 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 activeTreeName = treeName;
                 
 
-                console.log(layerAdd,layerAddText,coverage_type, toogleAreaStats, layerName)
+                console.log('toogleAreaStats',toogleAreaStats);
+                console.log('toogleAreaStatsByBrgy',toogleAreaStatsByBrgy);
+                console.log('toogleAreaStatsByMun',toogleAreaStatsByMun);
+                console.log('toogleAreaStatsByMProv',toogleAreaStatsByMProv);
 
                 if (toogleAreaStats == false && layerAddText == 'Barangay' && toogleAreaStatsByBrgy == false){
                     addLayerStats(URL, layerAddText, layerName);
                 }
-                if (toogleAreaStatsByBrgy == true && layerAddText == 'Barangay'){
+                if (toogleAreaStatsByBrgy == true && LAYERS.includes(layerName) && layerAddText == 'Barangay' ){
                     loadLayerStats(URL, layerAddText, layerName);
-                    console.log('load again..',layerAddText)
+                    console.log('load again..',layerName)
                 }
 
                 if (toogleAreaStats == false && layerAddText == 'City/Municipality' && toogleAreaStatsByMun == false){
                     addLayerStats(URL,layerAddText,  layerName);
                 }
-                if (toogleAreaStatsByMun == true && layerAddText == 'City/Municipality'){
+                if (toogleAreaStatsByMun == true && LAYERS.includes(layerName) && layerAddText == 'City/Municipality'){
                     loadLayerStats(URL, layerAddText, layerName);
-                    console.log('load again..',layerAddText)
+                    console.log('load again..',layerName)
                 }
+                
                 
 
                 if (toogleAreaStats == false && layerAddText == 'Province'  && toogleAreaStatsByMProv == false){
                     addLayerStats(URL,layerAddText,  layerName);
                 }
-                if (toogleAreaStatsByMProv == true && layerAddText == 'Province'){
+                if (toogleAreaStatsByMProv == true && LAYERS.includes(layerName) && layerAddText == 'Province'){
                     loadLayerStats(URL, layerAddText, layerName);
-                    console.log('load again..',layerAddText)
+                    console.log('load again..',layerName)
                 }
                
                 
