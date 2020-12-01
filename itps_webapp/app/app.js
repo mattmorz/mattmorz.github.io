@@ -507,7 +507,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
         if(_layer_name == 'Barangay_Bagras'){
             stats = brgyRepoBagras1
         }
-        BRGYtileLayer =L.vectorGrid.slicer(null);
+        //BRGYtileLayer =L.vectorGrid.slicer(null);
         BRGYtileLayer = L.vectorGrid.slicer(stats, {
             rendererFactory: L.canvas.tile,
             loadingControl: true,
@@ -580,7 +580,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
         if(_layer_name == 'City/Municipality_Bagras'){
             stats = munRepoBagras1
         }
-        MUNtileLayer =L.vectorGrid.slicer(null);
+        //MUNtileLayer =L.vectorGrid.slicer(null);
         MUNtileLayer = L.vectorGrid.slicer(stats, {
             rendererFactory: L.canvas.tile,
             loadingControl: true,
@@ -653,7 +653,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
         if(_layer_name == 'Province_Bagras'){
             stats = provRepoBagras1;
         }
-        PROVtileLayer =L.vectorGrid.slicer(null);
+        //PROVtileLayer =L.vectorGrid.slicer(null);
         PROVtileLayer = L.vectorGrid.slicer(stats, {
             rendererFactory: L.canvas.tile,
             loadingControl: true,
@@ -757,7 +757,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
        
     return div;
     };
-    legend.addTo(map);
+    //legend.addTo(map);
     //End Controls
 
     // create the sidebar instance and add it to the map
