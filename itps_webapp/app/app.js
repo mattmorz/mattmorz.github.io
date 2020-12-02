@@ -5,7 +5,7 @@
  * 12.1.2020
  **/
 
- var LAYERS = [];
+var LAYERS = [];
 var coverage_type = null;
 
 //GEOJSON FILES, EPSG:32651 coverted to EPSG:4321 for Web Display
@@ -29,7 +29,7 @@ const PROV_GMELINA = "https://raw.githubusercontent.com/mattmorz/mattmorz.github
 const PROV_MANGIUM = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Mangium_Stats_ProvLevel.json";
 const PROV_BAGRAS = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/data/Bagras_Stats_ProvLevel.json";
 
-// standard leaflet map setup
+/ standard leaflet map setup
 var map = L.map('map');
 map.setView([9.1204, 125.59], 8);
 
@@ -859,6 +859,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 if(layerAddText === 'Mangium' && toogleMANGIUM == true){
                     map.addLayer(MANGIUMtileLayer);
                 }
+
                 if(!LAYERS.includes(layerAddText+'_trees')){
                     LAYERS.push(layerAddText+'_trees');
                 }
@@ -1018,13 +1019,13 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
             if (layerRemoveText === 'Mangium' && groupTrees.hasLayer(MANGIUMtileLayer)){map.removeLayer(MANGIUMtileLayer);}
             
             if (layerRemove === 'stats'){
-                if(groupAreaStats.hasLayer(BRGYtileLayer) && layerRemoveText == 'Barangay'){
+                if(layerRemoveText == 'Barangay'){
                     map.removeLayer(BRGYtileLayer)
                 }
-                if(groupAreaStats.hasLayer(MUNtileLayer && layerRemoveText == 'City/Municipality')){
+                if(layerRemoveText == 'City/Municipality'){
                     map.removeLayer(MUNtileLayer)
                 }
-                if(groupAreaStats.hasLayer(PROVtileLayer) && layerRemoveText == 'Province'){
+                if(layerRemoveText == 'Province'){
                     map.removeLayer(PROVtileLayer)
                 }
             }
