@@ -122,22 +122,26 @@
                         </div>
                         <div class="form-group">
                             <label for="prov">Location</label>
-                            <select id="prov" class="form-control">
+                            <select id="prov" class="form-control" name="prov">
                                 <option value="">Select Province</option>
-                                <option value="AGUSAN DEL NORTE">Agusan del Norte</option>
-                                <option value="AGUSAN DEL SUR">Agusan del Sur</option>
-                                <option value="DINAGAT ISLAND">Dinagat Islands</option>
-                                <option value="SURIGAO DEL NORTE">Surigao del Norte</option>
-                                <option value="SURIGAO DEL SUR">Surigao del Sur</option>                          
+                                <option value="AGUSAN DEL NORTE">AGUSAN DEL NORTE</option>
+                                <option value="AGUSAN DEL SUR">AGUSAN DEL SUR</option>
+                                <option value="DINAGAT ISLAND">DINAGAT ISLAND</option>
+                                <option value="SURIGAO DEL NORTE">SURIGAO DEL NORTE</option>
+                                <option value="SURIGAO DEL SUR">SURIGAO DEL SUR</option>                          
                             </select>
                             <br/>
-                            <select id="citymun" class="form-control">
-                                <option value="">Select Province First</option>                     
+                            <select id="citymun" class="form-control" name="citymun">
+                                <option value="">Select Province First</option>               
                             </select>
                              <br/>
-                            <select id="brgy" class="form-control">
+                            <select id="brgy" class="form-control" name="brgy">
                                 <option value="">Select City/Municipality First</option>                     
                             </select>
+                        </div>
+                        <div class="form-group text-center">
+                            <input type="button" class="btn btn-info" value="Go" style="width: 150px;" id="btnGo"/>
+                            <input type="button" class="btn btn-danger" value="Clear" style="width: 150px;" id="btnClear"/>
                         </div>
                     </fieldset>
                 </form>              
@@ -190,10 +194,10 @@
         <div class="modal-content">
             <div class="modal-body text-center">
                 <div id="loaderWrap">
-                <div class="spinner-grow text-primary ml-auto" style="width: 5rem; height: 5rem;" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-                <strong><p>Loading...please wait.</p></strong>
+                    <div class="spinner-grow text-primary ml-auto" style="width: 5rem; height: 5rem;" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <strong><p>Loading...please wait.</p></strong>
                 </div>
             </div>
         </div>
@@ -221,14 +225,14 @@
     <script src="bootstrap/bootstrap.bundle.min.js"></script>
     <script src="js/bootstrap-multiselect.min.js"></script>
     <script src="js/jquery.tree-multiselect.min.js"></script>
+    <script src="js/jquery.chained.min.js"></script>
     <script src="leaflet/leaflet.js"></script>
     <script src="js/leaflet-sidebar.js"></script>
     <script src="js/Leaflet.VectorGrid.bundled.js"></script>
     <script src="js/L.Loading.js"></script>
-    <script src="js/leaflet.shpfile.js"></script>
     <script src="js/leaflet-omnivore.min.js"></script>
     <script src="js/leaflet-pip.min.js"></script>
     <script src="js/Chart.min.js"></script>
-    <script src="app/app.min.js"></script>
+    <script src="app/app.js"></script>
 </body>
 </html>
