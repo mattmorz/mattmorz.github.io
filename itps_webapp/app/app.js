@@ -83,7 +83,7 @@ function addFALCATA(){
     var trees;
     if (toogleFALCATA == false){
         $('#loadMe').modal('show');
-        var data = omnivore.geojson(FALCATA_GEOJSON);
+        var data = omnivore.topojson(FALCATA_GEOJSON);
        
         data.on('ready', function() {
             console.log('ready');
@@ -122,7 +122,7 @@ function addMANGIUM(){
     var trees;
     if (toogleMANGIUM == false){
         $('#loadMe').modal('show');
-        var data = omnivore.geojson(MANGIUM_GEOJSON);
+        var data = omnivore.topojson(MANGIUM_GEOJSON);
         data.on('ready', function() {
             console.log('ready');
             trees = data.toGeoJSON();
@@ -161,7 +161,7 @@ function addGMELINA(){
     var trees;
     if (toogleGMELINA == false){
          $('#loadMe').modal('show');
-        var data = omnivore.geojson(GMELINA_GEOJSON);
+        var data = omnivore.topojson(GMELINA_GEOJSON);
         data.on('ready', function() {
             console.log('ready');
             trees = data.toGeoJSON();
@@ -200,7 +200,7 @@ function addBAGRAS(){
     var trees;
     if(toogleBAGRAS == false){
         $('#loadMe').modal('show');
-        var data = omnivore.geojson(BAGRAS_GEOJSON);
+        var data = omnivore.topojson(BAGRAS_GEOJSON);
         data.on('ready', function() {
             console.log('ready');
            
@@ -249,7 +249,7 @@ function addLayerStats(URL, _coverage_type, _layer_name){
     if(toogleAreaStats == false){
         var stats;
         $('#loadMe').modal('show');
-        var data = omnivore.geojson(URL);
+        var data = omnivore.topojson(URL);
         data.on('ready', function() {
             console.log('ready');
             stats = data.toGeoJSON();
@@ -801,6 +801,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 console.log('added',addedItems);
                 if(!loadedLayers.includes(addedItems[0])){
                     loadedLayers.push(addedItems[0]);
+                    console.log(loadedLayers)
                 }
                
                 layerAdd = addedItems[0].value;
@@ -814,6 +815,13 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 LAYERS.splice(idx,1);
 
                 //START REMOVE AREA STATS LAYERS
+                for(var i=0;i<loadedLayers.length;i++){
+                    if(loadedLayers[i].value != 'trees'){
+                        var selectionNode = loadedLayers[i].node;
+                        selectionNode.getElementsByTagName('input')[0].checked = false;
+                        $('.item[data-key="'+loadedLayers[i].id+'"] span.remove-selected').click();
+                    }
+                }
                 if(groupAreaStats.hasLayer(BRGYtileLayer)){
                     map.removeLayer(BRGYtileLayer)
                 }
@@ -823,6 +831,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 if(groupAreaStats.hasLayer(PROVtileLayer)){
                     map.removeLayer(PROVtileLayer)
                 }
+ 
                 //END REMOVE AREA STATS LAYERS
 
                 if (layerAddText === 'Bagras' && toogleBAGRAS == false){
@@ -831,6 +840,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 if (layerAddText === 'Bagras' && toogleBAGRAS == true){
                     map.addLayer(BAGRAStileLayer);
                 }
+
                 if(layerAddText === 'Falcata' && toogleFALCATA == false){
                     addFALCATA();
                 }
@@ -848,6 +858,9 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 }
                 if(layerAddText === 'Mangium' && toogleMANGIUM == true){
                     map.addLayer(MANGIUMtileLayer);
+                }
+                if(!LAYERS.includes(layerAddText+'_trees')){
+                    LAYERS.push(layerAddText+'_trees');
                 }
             }
 
@@ -986,9 +999,6 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                     loadLayerStats(URL, layerAddText, layerName);
                     console.log('load again..',layerName)
                 }
-                
-                
-
                 if (toogleAreaStats == false && layerAddText == 'Province'  && toogleAreaStatsByMProv == false){
                     addLayerStats(URL,layerAddText,  layerName);
                 }
@@ -1002,23 +1012,20 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
             }
             
 
-            if (layerRemoveText === 'Falcata'){map.removeLayer(FALCATAtileLayer);}
-            if (layerRemoveText === 'Bagras'){map.removeLayer(BAGRAStileLayer);}
-            if (layerRemoveText === 'Gmelina'){map.removeLayer(GMELINAtileLayer);}
-            if (layerRemoveText === 'Mangium'){map.removeLayer(MANGIUMtileLayer);}
+            if (layerRemoveText === 'Falcata' && groupTrees.hasLayer(FALCATAtileLayer)){map.removeLayer(FALCATAtileLayer);}
+            if (layerRemoveText === 'Bagras' && groupTrees.hasLayer(BAGRAStileLayer)){map.removeLayer(BAGRAStileLayer);}
+            if (layerRemoveText === 'Gmelina' && groupTrees.hasLayer(GMELINAtileLayer)){map.removeLayer(GMELINAtileLayer);}
+            if (layerRemoveText === 'Mangium' && groupTrees.hasLayer(MANGIUMtileLayer)){map.removeLayer(MANGIUMtileLayer);}
             
             if (layerRemove === 'stats'){
-                if (layerRemoveText == 'Barangay'){
-                    map.removeLayer(BRGYtileLayer);
-                    console.log('remove',layerRemoveText)
+                if(groupAreaStats.hasLayer(BRGYtileLayer) && layerRemoveText == 'Barangay'){
+                    map.removeLayer(BRGYtileLayer)
                 }
-                if(layerRemoveText == 'City/Municipality'){
+                if(groupAreaStats.hasLayer(MUNtileLayer && layerRemoveText == 'City/Municipality')){
                     map.removeLayer(MUNtileLayer)
-                    console.log('remove',layerRemoveText)
                 }
-                if(layerRemoveText == 'Province'){
+                if(groupAreaStats.hasLayer(PROVtileLayer) && layerRemoveText == 'Province'){
                     map.removeLayer(PROVtileLayer)
-                    console.log('remove',layerRemoveText)
                 }
             }
             console.log(LAYERS)
