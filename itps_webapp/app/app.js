@@ -2,7 +2,7 @@
 
 /**
  * Coded by idsilmat@gmail.com
- * 12.1.2020
+ * 12.11.2020
  **/
 
 var LAYERS = [];
@@ -729,8 +729,67 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
     }
 }
 
+
+function loadDoc() {
+    var BRGYS = [];
+    $.getJSON(CARAGA_PLACES, function(res) {
+       var province = res['province_list'];
+       $.each(province, function(key,val){
+            var provNmae = key;
+            var muns = val;
+            $.each(muns, function(key,val){
+               var muns = key;
+               var brgys = val;
+               $.each(brgys, function(key,val){
+                    var munName = key;
+                    var bbrgys = val['barangay_list'];
+                    for(var i = 0;i<bbrgys.length;i++){
+                        BRGYS.push(bbrgys[i]+', '+munName+', '+provNmae)
+                    }
+                
+                })
+           })
+       })
+     });
+     return BRGYS;
+}
+
+
  $(document).ready(function() {
 
+    var Barangays = loadDoc();
+    var substringMatcher = function(strs) {
+        return function findMatches(q, cb) {
+          var matches, substringRegex;
+      
+          // an array that will be populated with substring matches
+          matches = [];
+      
+          // regex used to determine if a string contains the substring `q`
+          substrRegex = new RegExp(q, 'i');
+      
+          // iterate through the pool of strings and for any string that
+          // contains the substring `q`, add it to the `matches` array
+          $.each(strs, function(i, str) {
+            if (substrRegex.test(str)) {
+              matches.push(str);
+            }
+          });
+      
+          cb(matches);
+        };
+      };
+      
+      
+      $('#the-basics .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+      },
+      {
+        name: 'barangays',
+        source: substringMatcher(Barangays)
+      });
 
     //Base Maps
     var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -794,6 +853,9 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
         allowBatchSelection: false,
         showSectionOnSelected: false,
         onChange: function(allSelectedItems, addedItems, removedItems){
+            if(map.hasLayer(FILTERED_LAYER)){
+                map.removeLayer(FILTERED_LAYER)
+            }
             var layerAdd =  null;
             var layerAddText = null;
             var layerAddDataSection = null;
@@ -821,6 +883,8 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
 
                 var idx = LAYERS.indexOf('stats');
                 LAYERS.splice(idx,1);
+               
+                
 
                 //START REMOVE AREA STATS LAYERS
                 for(var i=0;i<loadedLayers.length;i++){
@@ -841,7 +905,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 }
  
                 //END REMOVE AREA STATS LAYERS
-
+                TREES_FILTER = layerAddText;
                 if (layerAddText === 'Bagras' && toogleBAGRAS == false){
                     addBAGRAS();
                 }
@@ -966,7 +1030,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                     URL = PROV_BAGRAS
                 }
 
-              
+                TREES_FILTER = layerName;
 
                 if((coverage_type != layerAddText || layerName !=activeStatsLayer) && !LAYERS.includes(layerName)){
                     toogleAreaStats = false;
@@ -986,7 +1050,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
                 }
                 activeStatsLayer = layerName;
                 activeTreeName = treeName;
-                
+
 
                 console.log('toogleAreaStats',toogleAreaStats);
                 console.log('toogleAreaStatsByBrgy',toogleAreaStatsByBrgy);
@@ -1066,6 +1130,9 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
         multiple: false,
         nonSelectedText: 'Select Tree',
         onChange: function(option, checked, select) {
+            if(map.hasLayer(FILTERED_LAYER)){
+                map.removeLayer(FILTERED_LAYER)
+            }
             var layer =  $(option).val();
             TREES_FILTER = layer;
             if (checked){
@@ -1286,6 +1353,7 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
 
 
     //OTHERS
+
     $("#citymun").remoteChained({
         parents: "#prov",
         url: CARAGA_PLACES,
@@ -1326,8 +1394,113 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
     $('#btnOK').click(function(){
         sidebar.open('query');
     })
+    $("#searchBarangay" ).focus(function() {
+        $('#the-basics .typeahead').typeahead('val','');
+    });
+    
+    $('#btnSearchBrgy').click(function(){
 
+        //if(map.hasLayer(FILTERED_LAYER)){
+        //    map.removeLayer(FILTERED_LAYER)
+        //}
 
+        var loc =$('#searchBarangay').val();
+        var loc_split = loc.split(',');
+        var coverage = "All";
+        
+        var dataGeojson = null;
+        if(TREES_FILTER =='Falcata'){
+            dataGeojson = falcataRepoJSON
+        }
+        if(TREES_FILTER =='Mangium'){
+            dataGeojson = mangiumRepoJSON
+        }
+        if(TREES_FILTER =='Gmelina'){
+            dataGeojson = gmelinaRepoJSON
+        }
+        if(TREES_FILTER =='Bagras'){
+            dataGeojson = bagrasRepoJSON
+        }
+        if(TREES_FILTER == 'Barangay_Falcata'){
+            dataGeojson =  brgyRepoFalcata1;
+        }
+        if(TREES_FILTER == 'Barangay_Gmelina'){
+            dataGeojson =  brgyRepoGmelina1;
+        }
+        if(TREES_FILTER == 'Barangay_Mangium'){
+            dataGeojson =  brgyRepoMangium1;
+        }
+        if(TREES_FILTER == 'Barangay_Bagras'){
+            dataGeojson =  brgyRepoBagras1;
+        }
+        
+        if(TREES_FILTER == 'City/Municipality_Falcata'){
+            dataGeojson =  munRepoFalcata1;
+            coverage = "Municipal";
+        }
+        if(TREES_FILTER == 'City/Municipality_Gmelina'){
+            dataGeojson =  munRepoGmelina1;
+            coverage = "Municipal";
+        }
+        if(TREES_FILTER == 'City/Municipality_Mangium'){
+            dataGeojson =  munRepoMangium1;
+            coverage = "Municipal";
+        }
+        if(TREES_FILTER == 'City/Municipality_Bagras'){
+            dataGeojson =  munRepoBagras1;
+            coverage = "Municipal";
+        }
+
+        if(TREES_FILTER == 'Province_Falcata'){
+            dataGeojson =  provRepoFalcata1;
+            coverage = "Provincial";
+        }
+        if(TREES_FILTER == 'Province_Gmelina'){
+            dataGeojson =  provRepoGmelina1;
+            coverage = "Provincial";
+        }
+        if(TREES_FILTER == 'Province_Mangium'){
+            dataGeojson =  provRepoMangium1;
+            coverage = "Provincial";
+        }
+        if(TREES_FILTER == 'Province_Bagras'){
+            dataGeojson =  provRepoBagras1;
+            coverage = "Provincial";
+        }
+        console.log(dataGeojson)
+        FILTERED_LAYER = L.geoJson(dataGeojson, {         
+                style :{
+                    fillColor: "#EE82EE",
+                    color: "white",
+                    weight: .1,
+                    fill: true,
+                    stroke: true,
+                    fillOpacity: .8
+                },
+                filter: function(feature) { 
+                    if(coverage == "All")  {
+                        console.log('all')
+                        return (feature.properties.Bgy_Name == loc_split[0] && feature.properties.Mun_Name == loc_split[1].trim() && feature.properties.Pro_Name == loc_split[2].trim())
+                    }else if(coverage == "Municipal"){
+                        console.log('mun and prov')
+                        return ( feature.properties.Mun_Name == loc_split[1].trim() && feature.properties.Pro_Name == loc_split[2].trim())
+                    }else{
+                        console.log('province only')
+                        return (feature.properties.Pro_Name == loc_split[2].trim())
+                    }       
+            }
+        }).addTo(map);   
+       if(dataGeojson == null){
+        alert('YOU HAVE NOT SELECTED/LOADED A LAYER!')
+       }
+       else if(FILTERED_LAYER.getLayers().length>0){
+            map.fitBounds(FILTERED_LAYER.getBounds())
+       }else{
+            alert('NO RESULT FOUND, TRY ANOTHER LOCATION!')
+        }
+
+        
+    })
     $('#btnGo').click(function(){
         if(map.hasLayer(FILTERED_LAYER)){
             map.removeLayer(FILTERED_LAYER)
@@ -1404,5 +1577,6 @@ function loadLayerStats(URL, _coverage_type, _layer_name){
         */
 
     })
+   
 });
 
