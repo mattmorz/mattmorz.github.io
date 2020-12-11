@@ -107,7 +107,15 @@
                         </div>
                     </fieldset>
                 </form>
-
+                <form id="filter2">
+                    <fieldset class="filter-border">
+                        <legend class="filter-border">Search</legend>
+                        <div class="input-group mb-3"  id="the-basics">
+                            <input type="text" class=" typeahead form-control" placeholder="Type Barangay..." aria-label="Type Barangay..." aria-describedby="btnSearchBrgy" id="searchBarangay">
+                            <button class="btn btn-info" type="button" id="btnSearchBrgy"  style="width: 125px;">Go</button>
+                          </div>
+                    </fieldset>
+                </form> 
                 <form id="filter1">
                     <fieldset class="filter-border">
                         <legend class="filter-border">Filter Options</legend>
@@ -144,9 +152,10 @@
                             <input type="button" class="btn btn-danger" value="Clear" style="width: 150px;" id="btnClear"/>
                         </div>
                     </fieldset>
-                </form>              
+                </form>                       
             </div> <!--enf of home-->
 
+            
             <div class="leaflet-sidebar-pane" id="about">
                 <h1 class="leaflet-sidebar-header">
                     About
@@ -233,6 +242,7 @@
     <script src="js/leaflet-omnivore.min.js"></script>
     <script src="js/leaflet-pip.min.js"></script>
     <script src="js/Chart.min.js"></script>
+    <script src="js/typeahead.jquery.js"></script>
     <script src="app/app.js"></script>
 </body>
 </html>
