@@ -31,7 +31,7 @@ div.tree-multiselect {
     div.tree-multiselect > div.selections.no-border {
       border-right: none; }
   div.tree-multiselect > div.selected > div.item {
-    background: #0074d9;
+    background: #36c678;
     border-radius: 2px;
     padding: 2px 5px;
     overflow: auto; }
@@ -49,7 +49,7 @@ div.tree-multiselect {
   div.tree-multiselect div.item {
     margin-bottom: 2px; }
   div.tree-multiselect div.title {
-    background:#4a759b;
+    background:#36c678;
     color: white;
     padding: 2px; }
     div.tree-multiselect div.title > * {
