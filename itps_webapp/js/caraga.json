@@ -32,7 +32,7 @@
               "Talo-ao"
             ]
           },
-          "BUTUAN CITY": {
+          "BUTUAN CITY (Capital)": {
             "barangay_list": [
               "Agao Pob. (Bgy. 3)",
               "Agusan Pequeño",
@@ -269,7 +269,7 @@
               "Humilog",
               "Panaytayon",
               "Poblacion I (Agay)",
-              "Poblacion Ii",
+              "Poblacion II",
               "San Antonio",
               "Tagbongabong"
             ]
@@ -282,7 +282,7 @@
               "La Paz",
               "Pangaylan-ip",
               "Poblacion I",
-              "Poblacion Ii",
+              "Poblacion II",
               "San Isidro",
               "Tagbuyacan"
             ]
@@ -657,7 +657,7 @@
           "VERUELA": {
             "barangay_list": [
               "Anitap",
-              "Bacay Ii",
+              "Bacay II",
               "Binongan",
               "Caigangan",
               "Candiis",
@@ -941,8 +941,8 @@
               "Magsaysay",
               "Malinao",
               "Poblacion I (Purok I)",
-              "Poblacion Ii (Purok Ii)",
-              "Poblacion Iii (Purok Iii)",
+              "Poblacion II (Purok II)",
+              "Poblacion IIi (Purok IIi)",
               "Poblacion Iv (Purok Iv)",
               "Poblacion V (Purok V)",
               "Santa Cruz",
@@ -1407,8 +1407,8 @@
               "Tarusan",
               "Tidman",
               "Tiwi",
-              "Zone Ii (Pob.)",
-              "Zone Iii Maharlika (Pob.)"
+              "Zone II (Pob.)",
+              "Zone IIi Maharlika (Pob.)"
             ]
           },
           "LANUZA": {
@@ -1423,8 +1423,8 @@
               "Pakwan",
               "Sibahay",
               "Zone I (Pob.)",
-              "Zone Ii (Pob.)",
-              "Zone Iii (Pob.)",
+              "Zone II (Pob.)",
+              "Zone IIi (Pob.)",
               "Zone Iv (Pob.)"
             ]
           },

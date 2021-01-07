@@ -1,8 +1,9 @@
 var LAYERS = [];
 var coverage_type = null;
 
-//GEOJSON FILES, EPSG:32651 coverted to EPSG:4321 for Web Display
+
 const BASE_URL = window.location.href;
+//TOPOJSON FILES, EPSG:32651 coverted to EPSG:4326 for Web Display
 const BAGRAS_GEOJSON = BASE_URL+"data/RescaledRefinedBagras_CaragaRegion.json";
 const MANGIUM_GEOJSON = BASE_URL+"data/RescaledRefinedMangium_CaragaRegion.json";
 const GMELINA_GEOJSON = BASE_URL+"data/RescaledRefinedGmelina_CaragaRegion.json";
@@ -13,20 +14,15 @@ const NGP_GMELINA_DENR= BASE_URL+"data/NGP_DENRCaraga_Gmelina.json";
 const NGP_MANGIUM_DENR = BASE_URL+"data/NGP_DENRCaraga_Mangium.json";
 const NGP_BAGRAS_DENR = BASE_URL+"data/NGP_DENRCaraga_Bagras.json";
 
-const BRGY_FALCATA = BASE_URL+"data/Falcata_Stats_BrgyLevel.json";
-const BRGY_GMELINA = BASE_URL+"data/Gmelina_Stats_BrgyLevel.json";
-const BRGY_MANGIUM = BASE_URL+"data/Mangium_Stats_BrgyLevel.json";
-const BRGY_BAGRAS = BASE_URL+"data/Bagras_Stats_BrgyLevel.json";
+const ITP_AREA_BRGY = BASE_URL+"data/ITP_Area_Barangay.json";
+const ITP_AREA_MUN = BASE_URL+"data/ITP_Area_Municipalit.json";
+const ITP_AREA_PRO = BASE_URL+"data/ITP_Area_Province.json";
 
-const MUN_FALCATA = BASE_URL+"data/Falcata_Stats_MunLevel.json";
-const MUN_GMELINA = BASE_URL+"data/Gmelina_Stats_MunLevel.json";
-const MUN_MANGIUM = BASE_URL+"data/Mangium_Stats_MunLevel.json";
-const MUN_BAGRAS = BASE_URL+"data/Bagras_Stats_MunLevel.json";
+//GEOJSON FILES, EPSG:32651 coverted to EPSG:4326 for Web Display
+const TPO_NASIPIT_2011 = BASE_URL+"data/TPO_Nasipit_2011.json";
+const TPO_NASIPIT_2012 = BASE_URL+"data/TPO_Nasipit_2012.json";
 
-const PROV_FALCATA = BASE_URL+"data/Falcata_Stats_ProvLevel.json";
-const PROV_GMELINA = BASE_URL+"data/Gmelina_Stats_ProvLevel.json";
-const PROV_MANGIUM = BASE_URL+"data/Mangium_Stats_ProvLevel.json";
-const PROV_BAGRAS = BASE_URL+"data/Bagras_Stats_ProvLevel.json";
+const ADS_GROUND_TRUTH = BASE_URL+"data/ADS_Ground_Truth.json";
 
 const CARAGA_PLACES = BASE_URL+"js/caraga.json";
 
@@ -38,6 +34,10 @@ var groupAreaStats = new L.layerGroup();
 var groupTrees = new L.layerGroup();
 var groupTreesNGP = new L.layerGroup();
 var groupOtherLayers = new L.layerGroup();
+var groupSurvey = new L.layerGroup();
+var groupTPO = new L.layerGroup();
+
+
 var FILTERED_LAYER = null;
 var highlight;
 
@@ -177,7 +177,7 @@ function toogleTreesNGP(URL,treeType,layerName,checked){
                 indexMaxZoom: 5,
                 interactive: true,
             }).addTo(map);
-           
+            
             console.log('added to map');
             groupTreesNGP.addLayer(treeLayer);
             console.log(ARR_LAYERS);
@@ -241,7 +241,7 @@ function toogleTreesNGP(URL,treeType,layerName,checked){
     
 }
 
-function toogleAreaStats(URL,treeType,coverage,checked){
+function toogleAreaStats(URL,treeType,coverage,treeName,checked){
     LAYER_NAME = treeType;
     if((ADDED_LAYERS.includes(treeType) == false) && checked == true){
         $('#loadMe').modal('show');
@@ -254,8 +254,7 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                 rendererFactory: L.canvas.tile,
                 vectorTileLayerStyles: {
                     sliced: function(properties){
-                        var area = parseFloat(properties.Area_sqm/10000);
-                        if(coverage == "Barangay"){
+                        var area = treeName == 'Falcata' ?  parseFloat(properties.Falc_Ar_h) : treeName == 'Gmelina' ? parseFloat(properties.Gmel_Ar_h) : treeName == 'Mangium' ? parseFloat(properties.Mang_Ar_h): parseFloat(properties.Bagr_Ar_h) ;
                             if(area == 0){
                                 return {
                                     fillColor: "white",
@@ -268,9 +267,9 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                             }
                             else if(area <= 10 && area > 0){
                                 return {
-                                    fillColor: treeType == 'Barangay_Falcata' ? "#edf8e9"
-                                                :treeType == 'Barangay_Gmelina' ? "#fee5d9"
-                                                :treeType == 'Barangay_Mangium' ? "#f2f0f7"
+                                    fillColor: treeName == 'Falcata' ? "#edf8e9"
+                                                :treeName == 'Gmelina' ? "#fee5d9"
+                                                :treeName == 'Mangium' ? "#f2f0f7"
                                                 : "#eff3ff",
                                     color: "black",
                                     weight: .5,
@@ -280,9 +279,9 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                                 }
                             }else if(area > 10 && area <= 20){
                                 return {
-                                    fillColor: treeType == 'Barangay_Falcata' ? "#bae4b3"
-                                                :treeType == 'Barangay_Gmelina' ? "#fcae91"
-                                                :treeType == 'Barangay_Mangium' ? "#cbc9e2"
+                                    fillColor: treeName == 'Falcata' ? "#bae4b3"
+                                                :treeName == 'Gmelina' ? "#fcae91"
+                                                :treeName == 'Mangium' ? "#cbc9e2"
                                                 : "#bdd7e7",
                                     color: "black",
                                     weight: .5,
@@ -292,9 +291,9 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                                 }
                             }else if(area > 20 && area <= 30){
                                 return {
-                                    fillColor: treeType == 'Barangay_Falcata' ? "#74c476"
-                                                :treeType == 'Barangay_Gmelina' ? "#fb6a4a"
-                                                :treeType == 'Barangay_Mangium' ? "#9e9ac8"
+                                    fillColor: treeName == 'Falcata' ? "#74c476"
+                                                :treeName == 'Gmelina' ? "#fb6a4a"
+                                                :treeName == 'Mangium' ? "#9e9ac8"
                                                 : "#6baed6",
                                     color: "black",
                                     weight: .5,
@@ -304,9 +303,9 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                                 }
                             }else if(area > 30 && area <= 40){
                                 return {
-                                    fillColor: treeType == 'Barangay_Falcata' ? "#31a354"
-                                                :treeType == 'Barangay_Gmelina' ? "#de2d26"
-                                                :treeType == 'Barangay_Mangium' ? "#756bb1"
+                                    fillColor: treeName == 'Falcata' ? "#31a354"
+                                                :treeName == 'Gmelina' ? "#de2d26"
+                                                :treeName == 'Mangium' ? "#756bb1"
                                                 : "#3182bd",
                                     color: "black",
                                     weight: .5,
@@ -316,9 +315,9 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                                 }
                             }else{
                                 return {
-                                    fillColor: treeType == 'Barangay_Falcata' ? "#006d2c"
-                                                :treeType == 'Barangay_Gmelina' ? "#a50f15"
-                                                :treeType == 'Barangay_Mangium' ? "#54278f"
+                                    fillColor: treeName == 'Falcata' ? "#006d2c"
+                                                :treeName == 'Gmelina' ? "#a50f15"
+                                                :treeName == 'Mangium' ? "#54278f"
                                                 : "#08519c",
                                     color: "black",
                                     weight: .5,
@@ -326,154 +325,7 @@ function toogleAreaStats(URL,treeType,coverage,checked){
                                     stroke: true,
                                     fillOpacity: .8
                                 }
-                            }
-                        }else if (coverage == 'City/Municipality'){
-                            if(area == 0){
-                                return {
-                                    fillColor: "white",
-                                    color: "black",
-                                    weight: 1,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }
-                            else if(area <= 10 && area > 0){
-                                return {
-                                    fillColor: treeType == 'City/Municipality_Falcata' ? "#edf8e9"
-                                                :treeType == 'City/Municipality_Gmelina' ? "#fee5d9"
-                                                :treeType == 'City/Municipality_Mangium' ? "#f2f0f7"
-                                                : "#eff3ff",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else if(area > 10 && area <= 20){
-                                return {
-                                    fillColor: treeType == 'City/Municipality_Falcata' ? "#bae4b3"
-                                                :treeType == 'City/Municipality_Gmelina' ? "#fcae91"
-                                                :treeType == 'City/Municipality_Mangium' ? "#cbc9e2"
-                                                : "#bdd7e7",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else if(area > 20 && area <= 30){
-                                return {
-                                    fillColor: treeType == 'City/Municipality_Falcata' ? "#74c476"
-                                                :treeType == 'City/Municipality_Gmelina' ? "#fb6a4a"
-                                                :treeType == 'City/Municipality_Mangium' ? "#9e9ac8"
-                                                : "#6baed6",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else if(area > 30 && area <= 40){
-                                return {
-                                    fillColor: treeType == 'City/Municipality_Falcata' ? "#31a354"
-                                                :treeType == 'City/Municipality_Gmelina' ? "#de2d26"
-                                                :treeType == 'City/Municipality_Mangium' ? "#756bb1"
-                                                : "#3182bd",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else{
-                                return {
-                                    fillColor: treeType == 'City/Municipality_Falcata' ? "#006d2c"
-                                                :treeType == 'City/Municipality_Gmelina' ? "#a50f15"
-                                                :treeType == 'City/Municipality_Mangium' ? "#54278f"
-                                                : "#08519c",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }
-                        }else{
-                            if(area == 0){
-                                return {
-                                    fillColor: "white",
-                                    color: "black",
-                                    weight: 1,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }
-                            else if(area <= 10 && area > 0){
-                                return {
-                                    fillColor: treeType == 'Province_Falcata' ? "#edf8e9"
-                                                :treeType == 'Province_Gmelina' ? "#fee5d9"
-                                                :treeType == 'Province_Mangium' ? "#f2f0f7"
-                                                : "#eff3ff",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else if(area > 10 && area <= 20){
-                                return {
-                                    fillColor: treeType == 'Province_Falcata' ? "#bae4b3"
-                                                :treeType == 'Province_Gmelina' ? "#fcae91"
-                                                :treeType == 'Province_Mangium' ? "#cbc9e2"
-                                                : "#bdd7e7",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else if(area > 21 && area <= 30){
-                                return {
-                                    fillColor: treeType == 'Province_Falcata' ? "#74c476"
-                                                :treeType == 'Province_Gmelina' ? "#fb6a4a"
-                                                :treeType == 'Province_Mangium' ? "#9e9ac8"
-                                                : "#6baed6",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else if(area > 31 && area <= 40){
-                                return {
-                                    fillColor: treeType == 'Province_Falcata' ? "#31a354"
-                                                :treeType == 'Province_Gmelina' ? "#de2d26"
-                                                :treeType == 'Province_Mangium' ? "#756bb1"
-                                                : "#3182bd",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }else{
-                                return {
-                                    fillColor: treeType == 'Province_Falcata' ? "#006d2c"
-                                                :treeType == 'Province_Gmelina' ? "#a50f15"
-                                                :treeType == 'Province_Mangium' ? "#54278f"
-                                                : "#08519c",
-                                    color: "black",
-                                    weight: .5,
-                                    fill: true,
-                                    stroke: true,
-                                    fillOpacity: .8
-                                }
-                            }
-
-                        }
-                        
+                            }      
                     }//sliced
                 },
                 maxZoom: 22,
@@ -543,6 +395,178 @@ function toogleAreaStats(URL,treeType,coverage,checked){
     
 }
 
+function toggleSurveyLoc(URL,layerName,checked){
+    LAYER_NAME = layerName;
+    if((groupSurvey.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true){
+        $.getJSON(URL, function(data) {
+            var trees = data;
+            var gp_layer =  L.geoJSON(trees, {
+                onEachFeature: function(feature, layer) {
+                    var highlightProp = feature.properties;
+                    var popup = '<strong>Species:</strong> ' + highlightProp.Species+'</br><strong>Location:</strong> '+highlightProp.Bgy_Name+', '+highlightProp.Mun_Name+', '+highlightProp.Pro_Name+', '+highlightProp.Reg_Name+'</br>'+'<strong>Area in hectares:</strong>'+parseFloat(highlightProp.Area_sqm/10000).toFixed(2);
+                    layer.bindPopup(popup);
+                },
+                style:  function(feature){
+                    var treeType = feature.properties.Species;
+                    return {
+                        fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : "#08519c" ,
+                        color: "black",
+                        weight: .1,
+                        fill: true,
+                        stroke: true,
+                        fillOpacity: .8
+                    }
+                }
+            }).addTo(map);
+            map.fitBounds(gp_layer.getBounds());
+            console.log('added to map');
+            groupSurvey.addLayer(gp_layer);
+            console.log(ARR_LAYERS);
+            var addedLayer = groupSurvey.getLayers();
+            var addedLayerId = addedLayer[groupSurvey.getLayers().length-1]._leaflet_id;
+            var obj = {}
+            obj[layerName]= addedLayerId;
+            ARR_LAYERS.push(obj);
+            ADDED_LAYERS.push(layerName);
+
+            var geojsonOBj = {};
+            trees.features[0].properties.show = true;
+            geojsonOBj[layerName]= trees;
+            geojsonOBj[layerName]['show']= true;
+            LAYERS_REPO.push(geojsonOBj);
+
+            $.each(LAYERS_REPO, function(idx){
+                if(LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)){
+                    LAYERS_REPO[idx][LAYER_NAME].show = true;
+                    LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
+                    console.log('added LAYER_GEOJSON-->',LAYER_NAME)  
+                };
+            })
+        })
+        
+
+    }else if(ADDED_LAYERS.includes(layerName) && checked == true){
+        for(var i=0;i<ARR_LAYERS.length;i++){
+            console.log(ARR_LAYERS[i].hasOwnProperty(layerName))
+            if(ARR_LAYERS[i].hasOwnProperty(layerName)){
+                console.log(ARR_LAYERS[i][layerName]);
+                var showLayer = groupSurvey.getLayer(ARR_LAYERS[i][layerName]);
+                map.addLayer(showLayer);
+                map.fitBounds(showLayer.getBounds());
+            }
+        }
+        $.each(LAYERS_REPO, function(idx){
+            if(LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)){
+                LAYERS_REPO[idx][LAYER_NAME].show = true;
+                //LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
+                console.log('set show to true-->',LAYER_NAME)  
+            };
+        })
+    }else if (checked == false){
+        for(var i=0;i<ARR_LAYERS.length;i++){
+            if(ARR_LAYERS[i].hasOwnProperty(layerName)){
+                console.log(ARR_LAYERS[i][layerName]);
+                var removeLayer = groupSurvey.getLayer(ARR_LAYERS[i][layerName]);
+                map.removeLayer(removeLayer);
+            }
+        }
+        $.each(LAYERS_REPO, function(idx){
+            if(LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)){
+                LAYERS_REPO[idx][LAYER_NAME].show = false;
+                console.log('set show to false-->',LAYER_NAME)  
+            };
+        })
+    }else{
+        console.log('ehhh no condition met')
+    }
+}
+
+function toggleTPO(URL,layerName,checked){
+    LAYER_NAME = layerName;
+    if((groupTPO.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true){
+        $.getJSON(URL, function(data) {
+            var trees = data;
+            var gp_layer =  L.geoJSON(trees, {
+                onEachFeature: function(feature, layer) {
+                    var highlightProp = feature.properties;
+                    var popup = '<strong>Species:</strong> ' + highlightProp.Species+'</br><strong>Location:</strong> '+highlightProp.Bgy_Name+', '+highlightProp.Mun_Name+', '+highlightProp.Pro_Name+', '+highlightProp.Reg_Name+'</br>'+'<strong>Area in hectare:</strong>'+parseFloat(highlightProp.Area).toFixed(2)+'</br>'+'<strong>Owner:</strong>'+highlightProp.Owner;
+                    layer.bindPopup(popup);
+                },
+                pointToLayer: function (feature, latlng) {
+                    var treeType = feature.properties.Species;
+                    return L.circleMarker(latlng,{
+                            fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : "#08519c" ,
+                            radius: 8,
+                            color: "#000",
+                            weight: 1,
+                            opacity: 1,
+                            stroke: false,
+                            fillOpacity: 0.8
+                    });
+                }
+
+            }).addTo(map);
+            map.fitBounds(gp_layer.getBounds());
+            console.log('added to map');
+            groupTPO.addLayer(gp_layer);
+            console.log(ARR_LAYERS);
+            var addedLayer = groupTPO.getLayers();
+            var addedLayerId = addedLayer[groupTPO.getLayers().length-1]._leaflet_id;
+            var obj = {}
+            obj[layerName]= addedLayerId;
+            ARR_LAYERS.push(obj);
+            ADDED_LAYERS.push(layerName);
+
+            var geojsonOBj = {};
+            trees.features[0].properties.show = true;
+            geojsonOBj[layerName]= trees;
+            geojsonOBj[layerName]['show']= true;
+            LAYERS_REPO.push(geojsonOBj);
+
+            $.each(LAYERS_REPO, function(idx){
+                if(LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)){
+                    LAYERS_REPO[idx][LAYER_NAME].show = true;
+                    LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
+                    console.log('added LAYER_GEOJSON-->',LAYER_NAME)  
+                };
+            })
+        })
+        
+
+    }else if(ADDED_LAYERS.includes(layerName) && checked == true){
+        for(var i=0;i<ARR_LAYERS.length;i++){
+            console.log(ARR_LAYERS[i].hasOwnProperty(layerName))
+            if(ARR_LAYERS[i].hasOwnProperty(layerName)){
+                console.log(ARR_LAYERS[i][layerName]);
+                var showLayer = groupTPO.getLayer(ARR_LAYERS[i][layerName]);
+                map.addLayer(showLayer);
+                map.fitBounds(showLayer.getBounds());
+            }
+        }
+        $.each(LAYERS_REPO, function(idx){
+            if(LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)){
+                LAYERS_REPO[idx][LAYER_NAME].show = true;
+                console.log('set show to true-->',LAYER_NAME)  
+            };
+        })
+    }else if (checked == false){
+        for(var i=0;i<ARR_LAYERS.length;i++){
+            if(ARR_LAYERS[i].hasOwnProperty(layerName)){
+                console.log(ARR_LAYERS[i][layerName]);
+                var removeLayer = groupTPO.getLayer(ARR_LAYERS[i][layerName]);
+                map.removeLayer(removeLayer);
+            }
+        }
+        $.each(LAYERS_REPO, function(idx){
+            if(LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)){
+                LAYERS_REPO[idx][LAYER_NAME].show = false;
+                console.log('set show to false-->',LAYER_NAME)  
+            };
+        })
+    }else{
+        console.log('ehhh no condition met')
+    }
+}
 
 function loadLocs() {
     var BRGYS = ['AGUSAN DEL NORTE', 'AGUSAN DEL SUR','SURIGAO DEL NORTE','SURIGAO DEL SUR','DINAGAT ISLANDS'];
@@ -578,16 +602,8 @@ $(document).ready(function() {
     var Barangays = loadLocs();
     var substringMatcher = function(strs) {
         return function findMatches(q, cb) {
-          var matches, substringRegex;
-      
-          // an array that will be populated with substring matches
-          matches = [];
-      
-          // regex used to determine if a string contains the substring `q`
+          var matches = [];
           substrRegex = new RegExp(q, 'i');
-      
-          // iterate through the pool of strings and for any string that
-          // contains the substring `q`, add it to the `matches` array
           $.each(strs, function(i, str) {
             if (substrRegex.test(str)) {
               matches.push(str);
@@ -701,8 +717,13 @@ $(document).ready(function() {
                 layerRemoveLayerName = layerRemoveText+'_'+layerRemoveDataSection[2];
                 
                 
-                if (layerRemove == 'stats')toogleAreaStats(null,layerRemoveLayerName,layerRemoveText,false);
+                if (layerRemove == 'stats')toogleAreaStats(null,layerRemoveLayerName,layerRemoveText,layerRemoveDataSection[2],false);
                 if (layerRemove == 'trees')toogleTrees(null,layerRemoveText,false);
+                if (layerRemove == 'survey')toggleSurveyLoc(null,layerRemoveText,false);
+                if (layerRemove == 'ownership'){
+                    var layerName = layerRemoveText+'_'+layerRemoveDataSection[3].replace(' ','');
+                    toggleTPO(null,layerName,false)
+                }
                 if (layerRemove == 'denrcaraga'){
                     var layerName = layerRemoveText+'_'+layerRemoveDataSection[3].replace(' ','');
                     toogleTreesNGP(null,layerRemoveText,layerName,false);
@@ -764,7 +785,44 @@ $(document).ready(function() {
                    
                 }
                 
-    
+                if (layerAdd === 'survey'){
+                    legend_trees.addTo(map);
+                    map.removeControl(legend_area);
+                    for(var i=0;i<LOADED_LAYERS.length;i++){
+                        if(LOADED_LAYERS[i].value != 'survey'){
+                            var selectionNode = LOADED_LAYERS[i].node;
+                            selectionNode.getElementsByTagName('input')[0].checked = false;
+                            $('.item[data-key="'+LOADED_LAYERS[i].id+'"] span.remove-selected').click();
+                        }
+                    }
+                    var URL = null;
+                    if(layerAddText == 'ADS Ground Truth'){
+                        URL = ADS_GROUND_TRUTH;
+                    }
+
+                    toggleSurveyLoc(URL,layerAddText,true)
+                }
+
+                if (layerAdd === 'ownership'){
+                    legend_trees.addTo(map);
+                    map.removeControl(legend_area);
+                    for(var i=0;i<LOADED_LAYERS.length;i++){
+                        if(LOADED_LAYERS[i].value != 'ownership'){
+                            var selectionNode = LOADED_LAYERS[i].node;
+                            selectionNode.getElementsByTagName('input')[0].checked = false;
+                            $('.item[data-key="'+LOADED_LAYERS[i].id+'"] span.remove-selected').click();
+                        }
+                    }
+                    var URL = null;
+                    var layerName = layerAddText+'_'+layerAddDataSection[3].replace(' ','');
+                    console.log(layerName)
+                    if(layerName == '2011_CTPOCENRO Nasipit')URL = TPO_NASIPIT_2011;
+                    if(layerName == '2012_CTPOCENRO Nasipit')URL = TPO_NASIPIT_2012;
+                    if(layerName == '2013_CTPOCENRO Nasipit')URL = TPO_NASIPIT_203;
+                    toggleTPO(URL,layerName,true);
+                }
+
+
                 if (layerAdd === 'stats'){
                     map.removeControl(legend_trees);
                     map.removeLayer(groupTrees);
@@ -772,8 +830,7 @@ $(document).ready(function() {
                     //map.removeLayer(groupAreaStats);
                     for(var i=0;i<LOADED_LAYERS.length;i++){
                         var selectionNode = LOADED_LAYERS[i].node;
-                        if(LOADED_LAYERS[i].id != addedItems[0].id){
-                            console.log(LOADED_LAYERS[i].id, addedItems[0].id)                   
+                        if(LOADED_LAYERS[i].id != addedItems[0].id){                
                             selectionNode.getElementsByTagName('input')[0].checked = false;      
                             $('.item[data-key="'+LOADED_LAYERS[i].id+'"] span.remove-selected').click();
                         }else{
@@ -782,49 +839,18 @@ $(document).ready(function() {
                     }
     
                     var URL = null;
-                    var layerName = layerAddText+'_'+layerAddDataSection[2];
+                    var layerName = layerAddText+'_'+layerAddDataSection[2]; 
                     var treeName = layerAddDataSection[2];
     
-                    if(layerName == 'Barangay_Falcata'){
-                        URL = BRGY_FALCATA;
+                    if (layerAddText == "Barangay"){
+                        URL = ITP_AREA_BRGY
+                    }else if(layerAddText == "City/Municipality"){
+                        URL = ITP_AREA_MUN
+                    }else{
+                        URL = ITP_AREA_PRO
                     }
-                    if(layerName == 'Barangay_Gmelina'){
-                        URL = BRGY_GMELINA
-                    }
-                    if(layerName == 'Barangay_Mangium'){
-                        URL = BRGY_MANGIUM
-                    }
-                    if(layerName == 'Barangay_Bagras'){
-                        URL = BRGY_BAGRAS 
-                    }
-                    
-                    if(layerName == 'City/Municipality_Falcata'){
-                        URL = MUN_FALCATA;
-                    }
-                    if(layerName == 'City/Municipality_Gmelina'){
-                        URL = MUN_GMELINA
-                    }
-                    if(layerName == 'City/Municipality_Mangium'){
-                        URL = MUN_MANGIUM
-                    }
-                    if(layerName == 'City/Municipality_Bagras'){
-                        URL = MUN_BAGRAS
-                    }
-    
-                    if(layerName == 'Province_Falcata'){
-                        URL = PROV_FALCATA
-                    }
-                    if(layerName == 'Province_Gmelina'){
-                        URL = PROV_GMELINA
-                    }
-                    if(layerName == 'Province_Mangium'){
-                        URL = PROV_MANGIUM
-                    }
-                    if(layerName == 'Province_Bagras'){
-                        URL = PROV_BAGRAS
-                    }
-    
-                    toogleAreaStats(URL,layerName,layerAddText,true);
+                    console.log(treeName)
+                    toogleAreaStats(URL,layerName,layerAddText,treeName,true);
     
                     legend_area.onAdd = function(map) {
                         var div = L.DomUtil.create("div", "maplegend");
@@ -1036,10 +1062,10 @@ $(document).ready(function() {
                         fillColor:'white'
                     },
                 });
-                var dataFalcata= parseFloat(highlightProp.Area_sqm/10000).toFixed(2);
-                var dataGmelina = Math.floor(Math.random() * Math.floor(40));
-                var dataMangium = Math.floor(Math.random() * Math.floor(40));
-                var dataBagras = Math.floor(Math.random() * Math.floor(40));
+                var dataFalcata= highlightProp.Falc_Ar_h;
+                var dataGmelina = highlightProp.Gmel_Ar_h;
+                var dataMangium = highlightProp.Mang_Ar_h;
+                var dataBagras = highlightProp.Bagr_Ar_h;
                 var newData = [dataFalcata,dataGmelina,dataMangium,dataBagras];
                 myChart.data["datasets"][0]["data"] = newData;
                 myChart.options.title.text = location;
