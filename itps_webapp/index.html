@@ -23,14 +23,14 @@
         <div class="leaflet-sidebar-tabs">
             <!-- top aligned tabs -->
             <ul role="tablist">
-                <li><a href="#welcome" role="tab" title="Welcome"><i class="fas fa-door-open active"></i></i></a></li>
-                <li><a href="#about" role="tab" title="About"><i class="fa fa-info"></i></a></li>
-                <li><a href="#query" role="tab" title="Web Mapping and Visualization"><i class="fa fa-map-marked-alt"></i></a></li>
-                <li><a href="#download" role="tab" title="Search and Download ITP Data"><i class="fa fa-file-download"></i></a></li>
-                <li><a href="#sources" role="tab" title="Sources of Data and Information"><i class="fa fa-server"></i></a></li>
-                <li><a href="#copy" role="tab" title="Terms and Conditions and Copyright Notice"><i class="fa fa-copyright"></i></a></li>
-                <li><a href="#citation" role="tab" title="Citation"><i class="fa fa-quote-right"></i></a></li>
-                <li><a href="#help" role="tab" title="Help"><i class="fa fa-question"></i></a></li>
+                <li><a href="#welcome" role="tab" data-toggle="tooltip" data-placement="right"  title="Welcome"><i class="fas fa-door-open active"></i></i></a></li>
+                <li><a href="#about" role="tab" data-toggle="tooltip" data-placement="right"   title="About"><i class="fa fa-info"></i></a></li>
+                <li><a href="#query" role="tab" data-toggle="tooltip" data-placement="right"  title="Web Mapping and Visualization"><i class="fa fa-map-marked-alt"></i></a></li>
+                <li><a href="#download" role="tab" data-toggle="tooltip" data-placement="right"  title="Search and Download ITP Data"><i class="fa fa-file-download"></i></a></li>
+                <li><a href="#sources" role="tab" data-toggle="tooltip" data-placement="right"  title="Sources of Data and Information"><i class="fa fa-server"></i></a></li>
+                <li><a href="#copy" role="tab" data-toggle="tooltip" data-placement="right"  title="Terms and Conditions and Copyright Notice"><i class="fa fa-copyright"></i></a></li>
+                <li><a href="#citation" role="tab"  data-toggle="tooltip" data-placement="right" title="Citation"><i class="fa fa-quote-right"></i></a></li>
+                <li><a href="#help" role="tab" data-toggle="tooltip" data-placement="right"  title="Help"><i class="fa fa-question"></i></a></li>
             </ul>
 
             <!-- bottom aligned tabs 
@@ -187,7 +187,7 @@
                                
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Loreto" data-index="20">Falcata</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Loreto" data-index="20">Gmelina</option>
-                                <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships" data-index="20">CTPO CENRO Tubay</option>
+                                <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Tubay" data-index="20">Polygon</option>
                                 <option value="denrcaraga" data-section="Layers/ITP-related Layers/ITPs Under the NGP/DENR Caraga" data-index="22">Falcata</option>
                                 <option value="denrcaraga" data-section="Layers/ITP-related Layers/ITPs Under the NGP/DENR Caraga" data-index="23">Gmelina</option>
                                 <option value="denrcaraga" data-section="Layers/ITP-related Layers/ITPs Under the NGP/DENR Caraga" data-index="24">Mangium</option>
@@ -440,7 +440,6 @@
   </div>
 
     <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
     <script src="bootstrap/bootstrap.bundle.min.js"></script>
     <script src="js/bootstrap-multiselect.min.js"></script>
     <script src="js/jquery.tree-multiselect.min.js"></script>
@@ -452,6 +451,7 @@
     <script src="js/leaflet-omnivore.min.js"></script>
     <script src="js/leaflet-pip.min.js"></script>
     <script src="js/Chart.min.js"></script>
+    <script src="js/chartjs-plugin-datalabels.js"></script>
     <script src="js/typeahead.jquery.js"></script>
     <script src="js/leaflet-measure.js"></script>
     <script src="js/leaflet-bing-layer.js"></script>
