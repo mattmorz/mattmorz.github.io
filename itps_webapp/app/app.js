@@ -181,6 +181,7 @@ function toogleTreesNGPOthers(URL,treeType,layerName,checked){
     LAYER_NAME = layerName;
     //console.log(ARR_LAYERS.trees[treeType]);
     if((groupTreesNGPOther.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true){
+            $('#loadMe').modal('show');
             $.getJSON(URL, function(data) {
                 var trees = data;
                 var gp_layer =  L.geoJSON(trees, {
@@ -233,6 +234,9 @@ function toogleTreesNGPOthers(URL,treeType,layerName,checked){
                             console.log('added LAYER_GEOJSON-->',LAYER_NAME)  
                         };
                     });
+                    setTimeout(function() {
+                        $('#loadMe').modal('hide');
+                    }, 500);
             })           
     }else if(ADDED_LAYERS.includes(layerName) && checked == true){
         for(var i=0;i<ARR_LAYERS.length;i++){
@@ -517,6 +521,7 @@ function toogleAreaStats(URL,treeType,coverage,treeName,checked){
 function toggleSurveyLoc(URL,layerName,checked){
     LAYER_NAME = layerName;
     if((groupSurvey.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true){
+        $('#loadMe').modal('show');
         $.getJSON(URL, function(data) {
             var trees = data;
             var gp_layer =  L.geoJSON(trees, {
@@ -561,6 +566,9 @@ function toggleSurveyLoc(URL,layerName,checked){
                     console.log('added LAYER_GEOJSON-->',LAYER_NAME)  
                 };
             })
+            setTimeout(function() {
+                $('#loadMe').modal('hide');
+            }, 500);
         })
         
 
@@ -603,6 +611,7 @@ function toggleSurveyLoc(URL,layerName,checked){
 function toggleTPO(URL,layerName,checked){
     LAYER_NAME = layerName;
     if((groupTPO.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true){
+        $('#loadMe').modal('show');
         $.getJSON(URL, function(data) {
             var trees = data;
             var geom_type = trees.features[0].geometry.type;
@@ -673,6 +682,9 @@ function toggleTPO(URL,layerName,checked){
                     console.log('added LAYER_GEOJSON-->',LAYER_NAME)  
                 };
             })
+            setTimeout(function() {
+                $('#loadMe').modal('hide');
+            }, 500);
         })
         
 
