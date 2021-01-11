@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "WPPs_Caragaregion",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "EMCO", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.78779, 8.44444, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Casilayan Softwood Development Corporation (CSDC)", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.79228, 8.4505, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "United Wood Industries Corporation", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.57303, 8.95531, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Orgon Wood Industries Inc.", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.55173, 8.91794, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Coronet Wood Indutries, Inc.", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 126.15307, 8.47666, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Jigs Wood", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.78119, 8.45931, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Pacific Timber & Wood Resources, Inc.", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.52865, 8.95383, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Richmond Plywood Corp.", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.54573, 8.95963, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Ventura Plywood Phils. Inc.", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.5418, 8.9711, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "EMCO Plywood Corporation", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.51814, 9.022, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Agusan Plywood Corporation", "FolderPath": "WPPs_Caragaregion.kmz\/WPPs_Caragaregion", "SymbolID": 0, "AltMode": -1, "Base": 0.0, "Snippet": null, "PopupInfo": null, "HasLabel": -1, "LabelID": 0 }, "geometry": { "type": "Point", "coordinates": [ 125.44854, 8.97894, 0.0 ] } }
+]
+}
