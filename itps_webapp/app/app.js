@@ -115,7 +115,7 @@ function toogleTrees(URL, treeType, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
@@ -224,7 +224,7 @@ function toogleTreesNGPOthers(URL, treeType, layerName, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
@@ -343,7 +343,7 @@ function toogleTreesNGP(URL, treeType, layerName, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
@@ -450,7 +450,7 @@ function toogleAreaStats(URL, treeType, coverage, treeName, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
@@ -633,7 +633,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
@@ -748,7 +748,7 @@ function toggleTPO(URL, layerName, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
@@ -883,7 +883,7 @@ function toggleOtherLayer(URL, layerName, checked) {
               setTimeout(function() {
                 $('#loadMe').modal('hide');
               }, 500);
-              LOADING_BAR.set(0);
+               
             }
           }
         }, false);
