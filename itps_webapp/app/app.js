@@ -1012,6 +1012,9 @@ $(document).ready(function() {
   //Enable tooltip
   $(function() {
     $('[data-toggle="tooltip"]').tooltip()
+  });
+  $('#loadMe').on('hidden.bs.modal', function (e) {
+    LOADING_BAR.set(0);
   })
 
 
