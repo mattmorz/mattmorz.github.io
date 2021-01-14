@@ -2,62 +2,68 @@
  * Code written by: idsilmat@gmail.com
  * mattmorz.blogspot.com
  * For: ITPs Geodatabase Project
- * 1/11/2021
- * v1.0.1
+ * v1.0.2
  * Added progress indicator
+ * Fixed base map z-index
+ * Code refactor
  */
 
 const BASE_URL = window.location.href;
-//TOPOJSON FILES, EPSG:32651 coverted to EPSG:4326 for Web Display
-const BAGRAS_GEOJSON = BASE_URL + "data/RescaledRefinedBagras_CaragaRegion.json";
-const MANGIUM_GEOJSON = BASE_URL + "data/RescaledRefinedMangium_CaragaRegion.json";
-const GMELINA_GEOJSON = BASE_URL + "data/RescaledRefinedGmelina_CaragaRegion.json";
-const FALCATA_GEOJSON = BASE_URL + "data/RescaledRefinedFalcata_CaragaRegion.json";
-
-const NGP_FALCATA_DENR = BASE_URL + "data/NGP_DENRCaraga_Falcata.json";
-const NGP_GMELINA_DENR = BASE_URL + "data/NGP_DENRCaraga_Gmelina.json";
-const NGP_MANGIUM_DENR = BASE_URL + "data/NGP_DENRCaraga_Mangium.json";
-const NGP_BAGRAS_DENR = BASE_URL + "data/NGP_DENRCaraga_Bagras.json";
-const NGP_PENRO_ADN_BAGRAS = BASE_URL + "data/NGP_PENROAdN_Bagras.json";
-const NGP_PENRO_ADN_FALCATA = BASE_URL + "data/NGP_PENROAdN_Falcata.json";
-const NGP_PENRO_ADN_MANGIUM = BASE_URL + "data/NGP_PENROAdN_Mangium.json";
-const NGP_PENRO_ADS_BAGRAS = BASE_URL + "data/NGP_PENROAdS_Bagras.json";
-const NGP_PENRO_ADS_FALCATA = BASE_URL + "data/NGP_PENROAdS_Falcata.json";
-const NGP_PENRO_ADS_MANGIUM = BASE_URL + "data/NGP_PENROAdS_Mangium.json";
-const NGP_CENRO_TALACOGON_FALCATA = BASE_URL + "data/NGP_CENROTalacogon_Falcata.json";
-const NGP_CENRO_TUBAY_FALCATA = BASE_URL + "data/NGP_CENROTubay_Falcata.json";
-const NGP_CENRO_TUBAY_MANGIUM = BASE_URL + "data/NGP_CENROTubay_Mangium.json";
-
-const ITP_AREA_BRGY = BASE_URL + "data/ITP_Area_Barangay.json";
-const ITP_AREA_MUN = BASE_URL + "data/ITP_Area_Municipalit.json";
-const ITP_AREA_PRO = BASE_URL + "data/ITP_Area_Province.json";
-
-//GEOJSON FILES, EPSG:32651 coverted to EPSG:4326 for Web Display
-const TPO_NASIPIT_2011 = BASE_URL + "data/TPO_Nasipit_2011.json";
-const TPO_NASIPIT_2012 = BASE_URL + "data/TPO_Nasipit_2012.json";
-const TPO_NASIPIT_2013 = BASE_URL + "data/PTPOC2013_CENRONasipit.json";
-const TPO_NASIPIT_2015 = BASE_URL + "data/PTPOC2015_CENRONasipit.json";
-const TPO_NASIPIT_2016 = BASE_URL + "data/PTPOC2016_CENRONasipit.json";
-const TPO_NASIPIT_2017 = BASE_URL + "data/PTPOC2017_CENRONasipit.json";
-const TPO_NASIPIT_2019 = BASE_URL + "data/PTPOC2019_CENRONasipit.json";
-const TPO_NASIPIT_2020 = BASE_URL + "data/PTPOC2020_CENRONasipit.json";
-const TPO_TALACOGON_FALCATA = BASE_URL + "data/CTPO_CENROTalacogon_Falcata.json";
-const TPO_TALACOGON_GMELINA = BASE_URL + "data/CTPO_CENROTalacogon_Gmelina.json";
-const TPO_TALACOGON_MANGIUM = BASE_URL + "data/CTPO_CENROTalacogon_Mangium.json";
-const TPO_TALACOGON_2012_2013 = BASE_URL + "data/CTPO20122013_CENROTalacogon.json";
-const TPO_TALACOGON_2016_2017 = BASE_URL + "data/CTPO20162017_CENROTalacogon.json";
-const TPO_TALACOGON_2017_2018 = BASE_URL + "data/CTPO20172018_CENROTalacogon.json";
-const TPO_TALACOGON_2018_2019 = BASE_URL + "data/CTPO20182019_CENROTalacogon.json";
-const TPO_LORETO_FALCATA = BASE_URL + "data/CTPO_CENROLoreto_Falcata.json";
-const TPO_LORETO_GMELINA = BASE_URL + "data/CTPO_CENROLoreto_Gmelina.json";
-const TPO_TUBAY = BASE_URL + "data/CTPO_CENROTubay.json";
-
-const ADS_GROUND_TRUTH = BASE_URL + "data/ADS_Ground_Truth.json";
-
-const FURNITURE = BASE_URL + "data/FurnitureStores_Caragaregion.json";
-const WPPs = BASE_URL + "data/WPPs_Caragaregion.json";
 const CARAGA_PLACES = BASE_URL + "js/caraga.json";
 
+const DATA_SOURCE_URL = {
+  FALCATA: BASE_URL + "data/RescaledRefinedFalcata_CaragaRegion.json",
+  GMELINA: BASE_URL + "data/RescaledRefinedGmelina_CaragaRegion.json",
+  MANGIUM: BASE_URL + "data/RescaledRefinedMangium_CaragaRegion.json",
+  BAGRAS: BASE_URL + "data/RescaledRefinedBagras_CaragaRegion.json",
+  BARANGAY_FALCATA: BASE_URL + "data/ITP_Area_Barangay.json",
+  CITY_MUNICIPALITY_FALCATA: BASE_URL + "data/ITP_Area_Municipalit.json",
+  PROVINCE_FALCATA: BASE_URL + "data/ITP_Area_Province.json",
+  BARANGAY_GMELINA: BASE_URL + "data/ITP_Area_Barangay.json",
+  CITY_MUNICIPALITY_GMELINA: BASE_URL + "data/ITP_Area_Municipalit.json",
+  PROVINCE_GMELINA: BASE_URL + "data/ITP_Area_Province.json",
+  BARANGAY_MANGIUM: BASE_URL + "data/ITP_Area_Barangay.json",
+  CITY_MUNICIPALITY_MANGIUM: BASE_URL + "data/ITP_Area_Municipalit.json",
+  PROVINCE_MANGIUM: BASE_URL + "data/ITP_Area_Province.json",
+  BARANGAY_BAGRAS: BASE_URL + "data/ITP_Area_Barangay.json",
+  CITY_MUNICIPALITY_BAGRAS: BASE_URL + "data/ITP_Area_Municipalit.json",
+  PROVINCE_BAGRAS: BASE_URL + "data/ITP_Area_Province.json",
+  WOOD_PROCESSING_PLANT: BASE_URL + "data/WPPs_Caragaregion.json",
+  FURNITURE_STORE : BASE_URL + "data/FurnitureStores_Caragaregion.json",
+  ADS_GROUND_TRUTH:  BASE_URL + "data/ADS_Ground_Truth.json",
+  CTPO_CENRO_NASIPIT_2011: BASE_URL + "data/TPO_Nasipit_2011.json",
+  CTPO_CENRO_NASIPIT_2012: BASE_URL + "data/TPO_Nasipit_2012.json",
+  CTPO_CENRO_NASIPIT_2013: BASE_URL + "data/PTPOC2013_CENRONasipit.json",
+  CTPO_CENRO_NASIPIT_2015: BASE_URL + "data/PTPOC2015_CENRONasipit.json",
+  CTPO_CENRO_NASIPIT_2016: BASE_URL + "data/PTPOC2016_CENRONasipit.json",
+  CTPO_CENRO_NASIPIT_2017: BASE_URL + "data/PTPOC2017_CENRONasipit.json",
+  CTPO_CENRO_NASIPIT_2019: BASE_URL + "data/PTPOC2019_CENRONasipit.json",
+  CTPO_CENRO_NASIPIT_2020: BASE_URL + "data/PTPOC2020_CENRONasipit.json",
+  CTPO_CENRO_TALACOGON_FALCATA: BASE_URL + "data/CTPO_CENROTalacogon_Falcata.json",
+  CTPO_CENRO_TALACOGON_GMELINA: BASE_URL + "data/CTPO_CENROTalacogon_Gmelina.json",
+  CTPO_CENRO_TALACOGON_MANGIUM: BASE_URL + "data/CTPO_CENROTalacogon_Mangium.json",
+  CTPO_CENRO_TALACOGON_2012_2013: BASE_URL + "data/CTPO20122013_CENROTalacogon.json",
+  CTPO_CENRO_TALACOGON_2016_2017: BASE_URL + "data/CTPO20162017_CENROTalacogon.json",
+  CTPO_CENRO_TALACOGON_2017_2018: BASE_URL + "data/CTPO20172018_CENROTalacogon.json",
+  CTPO_CENRO_TALACOGON_2018_2019: BASE_URL + "data/CTPO20182019_CENROTalacogon.json",
+  CTPO_CENRO_LORETO_FALCATA: BASE_URL + "data/CTPO_CENROLoreto_Falcata.json",
+  CTPO_CENRO_LORETO_GMELINA: BASE_URL + "data/CTPO_CENROLoreto_Gmelina.json",
+  CTPO_CENRO_TUBAY_POLYGON: BASE_URL + "data/CTPO_CENROTubay.json",
+  FALCATA_DENR_CARAGA: BASE_URL + "data/NGP_DENRCaraga_Falcata.json",
+  GMELINA_DENR_CARAGA: BASE_URL + "data/NGP_DENRCaraga_Gmelina.json",
+  MANGIUM_DENR_CARAGA: BASE_URL + "data/NGP_DENRCaraga_Mangium.json",
+  BAGRAS_DENR_CARAGA: BASE_URL + "data/NGP_DENRCaraga_Bagras.json",
+  NGP_PENRO_ADN_BAGRAS: BASE_URL + "data/NGP_PENROAdN_Bagras.json",
+  FALCATA_PENRO_ADN: BASE_URL + "data/NGP_PENROAdN_Falcata.json",
+  MANGIUM_PENRO_ADN: BASE_URL + "data/NGP_PENROAdN_Mangium.json",
+  BAGRAS_PENRO_ADN: BASE_URL + "data/NGP_PENROAdS_Bagras.json",
+  FALCATA_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Falcata.json",
+  MANGIUM_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Mangium.json",
+  FALCATA_CENRO_TALACOGON: BASE_URL + "data/NGP_CENROTalacogon_Falcata.json",
+  FALCATA_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Falcata.json",
+  MANGIUM_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Mangium.json",
+
+}
 //Standard leaflet map setup
 var map = L.map('map');
 map.setView([9.1204, 125.59], 8);
@@ -95,11 +101,9 @@ var LOADING_BAR = new ldBar("#myItem1");
  * param(GEOJSON URL, tree species name, checked or unchecked)
  **/
 function toogleTrees(URL, treeType, checked) {
-  console.log(groupTrees.getLayers());
-  console.log(ADDED_LAYERS.includes(treeType));
   LAYER_NAME = treeType;
-
   if ((groupTrees.getLayers().length == 0 || ADDED_LAYERS.includes(treeType) == false) && checked == true) {
+    var percentComplete = 0;
     $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
@@ -107,16 +111,11 @@ function toogleTrees(URL, treeType, checked) {
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");
+            var LOADING_BAR = new ldBar("#myItem1");          
             LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-              setTimeout(function() {
-                $('#loadMe').modal('hide');
-              }, 500);
-               
-            }
+            
           }
         }, false);
         return xhr;
@@ -125,50 +124,56 @@ function toogleTrees(URL, treeType, checked) {
       url: URL,
       success: function(data) {
         console.log('ready');
-        //Add canvas layer
-        var ddata = omnivore.topojson.parse(data);
-        var trees = ddata.toGeoJSON();
-        var treeLayer = L.vectorGrid.slicer(trees, {
-          rendererFactory: L.canvas.tile,
-          vectorTileLayerStyles: {
-            sliced: {
-              fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : "#08519c",
-              color: "black",
-              weight: .1,
-              fill: true,
-              stroke: true,
-              fillOpacity: .8
-            }
-          },
-          maxZoom: 22,
-          indexMaxZoom: 5,
-          interactive: true,
-        }).addTo(map);
+        if (percentComplete == 100) {
+          //Add canvas layer
+          var ddata = omnivore.topojson.parse(data);
+          var trees = ddata.toGeoJSON();
+          var treeLayer = L.vectorGrid.slicer(trees, {
+            rendererFactory: L.canvas.tile,
+            vectorTileLayerStyles: {
+              sliced: {
+                fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : "#08519c",
+                color: "black",
+                weight: .1,
+                fill: true,
+                stroke: true,
+                fillOpacity: .8
+              }
+            },
+            maxZoom: 22,
+            indexMaxZoom: 5,
+            interactive: true,
+          }).addTo(map);
 
-        console.log('added to map');
-        groupTrees.addLayer(treeLayer);
+          console.log('added to map');
+          groupTrees.addLayer(treeLayer);
 
-        var addedLayer = groupTrees.getLayers();
-        var addedLayerId = addedLayer[groupTrees.getLayers().length - 1]._leaflet_id;
-        var obj = {}
-        obj[treeType] = addedLayerId;
-        ARR_LAYERS.push(obj);
-        ADDED_LAYERS.push(treeType);
+          var addedLayer = groupTrees.getLayers();
+          var addedLayerId = addedLayer[groupTrees.getLayers().length - 1]._leaflet_id;
+          var obj = {}
+          obj[treeType] = addedLayerId;
+          ARR_LAYERS.push(obj);
+          ADDED_LAYERS.push(treeType);
 
-        var geojsonOBj = {};
-        trees.features[0].properties.show = true;
-        geojsonOBj[treeType] = trees;
-        geojsonOBj[treeType]['show'] = true;
-        LAYERS_REPO.push(geojsonOBj);
+          var geojsonOBj = {};
+          trees.features[0].properties.show = true;
+          geojsonOBj[treeType] = trees;
+          geojsonOBj[treeType]['show'] = true;
+          LAYERS_REPO.push(geojsonOBj);
 
-        $.each(LAYERS_REPO, function(idx) {
-          if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
-            LAYERS_REPO[idx][LAYER_NAME].show = true;
-            LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
-            console.log('added LAYER_GEOJSON-->', LAYER_NAME)
-          };
-        })
+          $.each(LAYERS_REPO, function(idx) {
+            if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
+              LAYERS_REPO[idx][LAYER_NAME].show = true;
+              LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
+              console.log('added LAYER_GEOJSON-->', LAYER_NAME)
+              setTimeout(function() {
+                console.log('completed...');
+                $('#loadMe').modal('hide');
+              }, 500);
+            };
+          })
 
+        }//100
       } //success
     });
 
@@ -222,6 +227,7 @@ function toogleTreesNGPOthers(URL, treeType, layerName, checked) {
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
               setTimeout(function() {
+                console.log('completed...');
                 $('#loadMe').modal('hide');
               }, 500);
                
@@ -337,13 +343,13 @@ function toogleTreesNGP(URL, treeType, layerName, checked) {
           if (evt.lengthComputable) {
             var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             /* construct manually */
-
+            console.log(percentComplete)
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-              setTimeout(function() {
-                $('#loadMe').modal('hide');
-              }, 500);
-               
+                setTimeout(function() {
+                  console.log('completed...');
+                  $('#loadMe').modal('hide');
+                }, 500);
             }
           }
         }, false);
@@ -448,6 +454,7 @@ function toogleAreaStats(URL, treeType, coverage, treeName, checked) {
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
               setTimeout(function() {
+                console.log('completed...');
                 $('#loadMe').modal('hide');
               }, 500);
                
@@ -631,6 +638,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
               setTimeout(function() {
+                console.log('completed...');
                 $('#loadMe').modal('hide');
               }, 500);
                
@@ -732,6 +740,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
 
 function toggleTPO(URL, layerName, checked) {
   LAYER_NAME = layerName;
+ 
   if ((groupTPO.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $('#loadMe').modal('show');
     $.ajax({
@@ -746,6 +755,7 @@ function toggleTPO(URL, layerName, checked) {
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
               setTimeout(function() {
+                console.log('completed...');
                 $('#loadMe').modal('hide');
               }, 500);
                
@@ -881,6 +891,7 @@ function toggleOtherLayer(URL, layerName, checked) {
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
               setTimeout(function() {
+                console.log('completed...');
                 $('#loadMe').modal('hide');
               }, 500);
                
@@ -1042,16 +1053,28 @@ $(document).ready(function() {
   var bingMap = L.tileLayer.bing({
     bingMapsKey: 'Ao6UEij7ZblJ1soOx6opo-plK6LyISwyibIqcPQSRWpxE_yQ27qwI7HdoDNN9ePl',
     imagerySet: 'Road',
+    zIndex: 0
 
   })
   var bingImagery = L.tileLayer.bing({
     bingMapsKey: 'Ao6UEij7ZblJ1soOx6opo-plK6LyISwyibIqcPQSRWpxE_yQ27qwI7HdoDNN9ePl',
-    imagerySet: 'Aerial'
+    imagerySet: 'Aerial',
+    zIndex: 0
   })
   var bingHybrid = L.tileLayer.bing({
     bingMapsKey: 'Ao6UEij7ZblJ1soOx6opo-plK6LyISwyibIqcPQSRWpxE_yQ27qwI7HdoDNN9ePl',
-    imagerySet: 'AerialWithLabels'
+    imagerySet: 'AerialWithLabels',
+    zIndex: 0
   })
+  const BASE_MAP = {
+    osm: osm,
+    googleHybrid: googleHybrid,
+    googleSat: googleSat,
+    bingmap: bingMap,
+    bingimagery: bingImagery,
+    binghybrid: bingHybrid
+  }
+
   //End Base Map
 
   //Controls
@@ -1120,21 +1143,24 @@ $(document).ready(function() {
         layerRemoveDataSection = removedItems[0].section.split('/');
         layerRemoveLayerName = layerRemoveText + '_' + layerRemoveDataSection[2];
 
-        if (layerRemove == 'stats') toogleAreaStats(null, layerRemoveLayerName, layerRemoveText, layerRemoveDataSection[2], false);
+        if (layerRemove == 'stats') {
+          var layerName = layerRemoveText.replace(/[\/. ,:-]+/g, "_") + '_' + layerRemoveDataSection[2];
+          toogleAreaStats(null, layerName.toUpperCase(), layerRemoveText, layerRemoveDataSection[2], false);
+        }
         if (layerRemove == 'trees') toogleTrees(null, layerRemoveText, false);
         if (layerRemove == 'survey') toggleSurveyLoc(null, layerRemoveText, false);
         if (layerRemove == 'others') toggleOtherLayer(null, layerRemoveText, false);
         if (layerRemove == 'ownership') {
-          var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(' ', '');
-          toggleTPO(null, layerName, false)
+          var layerName = layerRemoveDataSection[3].replace(/[\/. ,:-]+/g, "_")+'_'+layerRemoveText.replace(/[\/. ,:-]+/g, "_");
+          toggleTPO(null, layerName.toUpperCase(), false)
         }
         if (layerRemove == 'denrcaraga') {
-          var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(' ', '');
-          toogleTreesNGP(null, layerRemoveText, layerName, false);
+          var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(/\s/g, '_');
+          toogleTreesNGP(null, layerRemoveText, layerName.toUpperCase(), false);
         }
         if (layerRemove == 'penroadn' || layerRemove == 'penroads' || layerRemove == 'cenrotalacogon' || layerRemove == 'cenrotubay') {
-          var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(' ', '');
-          toogleTreesNGPOthers(null, layerRemoveText, layerName, false);
+          var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(/\s/g, '_');
+          toogleTreesNGPOthers(null, layerRemoveText, layerName.toUpperCase(), false);
         }
       }
 
@@ -1142,8 +1168,8 @@ $(document).ready(function() {
       if (addedItems.length > 0) {
         if (!LOADED_LAYERS.includes(addedItems[0])) {
           LOADED_LAYERS.push(addedItems[0]);
-          console.log(LOADED_LAYERS)
         }
+
         layerAdd = addedItems[0].value;
         layerAddText = addedItems[0].text;
         layerAddDataSection = addedItems[0].section.split('/');
@@ -1159,171 +1185,8 @@ $(document).ready(function() {
               $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
             }
           }
-          var URL = null;
-          if (layerAddText === 'Falcata') URL = FALCATA_GEOJSON;
-          if (layerAddText === 'Gmelina') URL = GMELINA_GEOJSON;
-          if (layerAddText === 'Mangium') URL = MANGIUM_GEOJSON;
-          if (layerAddText === 'Bagras') URL = BAGRAS_GEOJSON;
-
-          toogleTrees(URL, layerAddText, true);
-        }
-
-        if (layerAdd === 'others') {
-          map.removeControl(legend_area);
-          map.removeControl(legend_trees);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'others') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var URL = null;
-          if (layerAddText === 'Wood Processing Plant') URL = WPPs;
-          if (layerAddText === 'Furniture Store') URL = FURNITURE;
-
-          toggleOtherLayer(URL, layerAddText, true);
-        }
-
-        if (layerAdd === 'denrcaraga') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          map.removeLayer(groupAreaStats);
-          map.removeLayer(groupTrees);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'denrcaraga') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(' ', '');
-          var treeType = layerAddText;
-          var URL = layerName == 'Falcata_DENRCaraga' ? NGP_FALCATA_DENR : layerName == 'Gmelina_DENRCaraga' ? NGP_GMELINA_DENR : layerName == 'Mangium_DENRCaraga' ? NGP_MANGIUM_DENR : NGP_BAGRAS_DENR;
-          toogleTreesNGP(URL, treeType, layerName, true)
-        }
-
-        if (layerAdd == 'penroadn') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          map.removeLayer(groupAreaStats);
-          map.removeLayer(groupTrees);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'penroadn') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(' ', '');
-          var treeType = layerAddText;
-          var URL = layerName == 'Falcata_PENROADN' ? NGP_PENRO_ADN_FALCATA : layerName == 'Mangium_PENROADN' ? NGP_PENRO_ADN_MANGIUM : NGP_PENRO_ADN_BAGRAS;
-          toogleTreesNGPOthers(URL, treeType, layerName, true)
-        }
-
-        if (layerAdd == 'penroads') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          map.removeLayer(groupAreaStats);
-          map.removeLayer(groupTrees);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'penroads') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-
-          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(' ', '');
-          var treeType = layerAddText;
-          var URL = layerName == 'Falcata_PENROADS' ? NGP_PENRO_ADS_FALCATA : layerName == 'Mangium_PENROADS' ? NGP_PENRO_ADS_MANGIUM : NGP_PENRO_ADS_BAGRAS;
-          console.log(layerName)
-          toogleTreesNGPOthers(URL, treeType, layerName, true)
-        }
-
-        if (layerAdd == 'cenrotalacogon') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          map.removeLayer(groupAreaStats);
-          map.removeLayer(groupTrees);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'cenrotalacogon') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(' ', '');
-          var treeType = layerAddText;
-          var URL = layerName == 'Falcata_CENROTalacogon' ? NGP_CENRO_TALACOGON_FALCATA : null;
-          toogleTreesNGPOthers(URL, treeType, layerName, true)
-        }
-
-        if (layerAdd == 'cenrotubay') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          map.removeLayer(groupAreaStats);
-          map.removeLayer(groupTrees);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'cenrotubay') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(' ', '');
-          var treeType = layerAddText;
-          var URL = layerName == 'Falcata_CENROTubay' ? NGP_CENRO_TUBAY_FALCATA : NGP_CENRO_TUBAY_MANGIUM;
-          toogleTreesNGPOthers(URL, treeType, layerName, true)
-        }
-
-        if (layerAdd === 'survey') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'survey') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var URL = null;
-          if (layerAddText == 'ADS Ground Truth') URL = ADS_GROUND_TRUTH;
-          toggleSurveyLoc(URL, layerAddText, true)
-        }
-
-        if (layerAdd === 'ownership') {
-          legend_trees.addTo(map);
-          map.removeControl(legend_area);
-          for (var i = 0; i < LOADED_LAYERS.length; i++) {
-            if (LOADED_LAYERS[i].value != 'ownership') {
-              var selectionNode = LOADED_LAYERS[i].node;
-              selectionNode.getElementsByTagName('input')[0].checked = false;
-              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-            }
-          }
-          var URL = null;
-          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(' ', '');
-          if (layerName == '2011_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2011;
-          if (layerName == '2012_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2012;
-          if (layerName == '2013_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2013;
-          if (layerName == '2015_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2015;
-          if (layerName == '2016_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2016;
-          if (layerName == '2017_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2017;
-          if (layerName == '2019_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2019;
-          if (layerName == '2020_CTPOCENRO Nasipit') URL = TPO_NASIPIT_2020;
-          if (layerName == 'Falcata_CTPOCENRO Talacogon') URL = TPO_TALACOGON_FALCATA;
-          if (layerName == 'Gmelina_CTPOCENRO Talacogon') URL = TPO_TALACOGON_GMELINA;
-          if (layerName == 'Mangium_CTPOCENRO Talacogon') URL = TPO_TALACOGON_MANGIUM;
-          if (layerName == '2012-2013_CTPOCENRO Talacogon') URL = TPO_TALACOGON_2012_2013;
-          if (layerName == '2016-2017_CTPOCENRO Talacogon') URL = TPO_TALACOGON_2016_2017;
-          if (layerName == '2017-2018_CTPOCENRO Talacogon') URL = TPO_TALACOGON_2017_2018;
-          if (layerName == '2018-2019_CTPOCENRO Talacogon') URL = TPO_TALACOGON_2018_2019;
-          if (layerName == 'Falcata_CTPOCENRO Loreto') URL = TPO_LORETO_FALCATA;
-          if (layerName == 'Gmelina_CTPOCENRO Loreto') URL = TPO_LORETO_GMELINA;
-          if (layerName == 'Polygon_CTPOCENRO Tubay') URL = TPO_TUBAY;
-
-          toggleTPO(URL, layerName, true);
+          var layerName = layerAddText.toUpperCase();
+          toogleTrees(DATA_SOURCE_URL[layerName], layerAddText, true);
         }
 
         if (layerAdd === 'stats') {
@@ -1340,19 +1203,11 @@ $(document).ready(function() {
             }
           }
 
-          var URL = null;
-          var layerName = layerAddText + '_' + layerAddDataSection[2];
+          var layerName = layerAddText.replace(/[\/. ,:-]+/g, "_") + '_' + layerAddDataSection[2];
           var treeName = layerAddDataSection[2];
+          var layerNameUpper = layerName.toUpperCase();
 
-          if (layerAddText == "Barangay") {
-            URL = ITP_AREA_BRGY
-          } else if (layerAddText == "City/Municipality") {
-            URL = ITP_AREA_MUN
-          } else {
-            URL = ITP_AREA_PRO
-          }
-          toogleAreaStats(URL, layerName, layerAddText, treeName, true);
-
+          toogleAreaStats(DATA_SOURCE_URL[layerNameUpper], layerNameUpper, layerAddText, treeName, true);
           legend_area.onAdd = function(map) {
             var div = L.DomUtil.create("div", "maplegend");
             var zeroTenColor = treeName == 'Falcata' ? '#edf8e9' : treeName == 'Gmelina' ? '#fee5d9' : treeName == 'Mangium' ? '#f2f0f7' : '#eff3ff';
@@ -1377,62 +1232,158 @@ $(document).ready(function() {
             return div;
           };
           legend_area.addTo(map);
-          LAYER_NAME = layerName;
-
         }
+
+        if (layerAdd === 'others') {
+          map.removeControl(legend_area);
+          map.removeControl(legend_trees);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'others') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddText.replace(/\s/g, '_');
+          toggleOtherLayer(DATA_SOURCE_URL[layerName.toUpperCase()], layerAddText, true);
+        }
+
+        if (layerAdd === 'survey') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'survey') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var URL = null;
+          var layerName = layerAddText.replace(/\s/g, '_');          
+          toggleSurveyLoc(DATA_SOURCE_URL[layerName.toUpperCase()], layerAddText, true)
+        }
+
+        if (layerAdd === 'ownership') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'ownership') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddDataSection[3].replace(/[\/. ,:-]+/g, "_")+'_'+layerAddText.replace(/[\/. ,:-]+/g, "_");
+          toggleTPO(DATA_SOURCE_URL[layerName.toUpperCase()], layerName.toUpperCase(), true);
+        }
+
+        if (layerAdd === 'denrcaraga') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          map.removeLayer(groupAreaStats);
+          map.removeLayer(groupTrees);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'denrcaraga') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
+          var treeType = layerAddText;
+          toogleTreesNGP(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+        }
+
+        if (layerAdd == 'penroadn') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          map.removeLayer(groupAreaStats);
+          map.removeLayer(groupTrees);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'penroadn') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
+          var treeType = layerAddText;
+          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+        }
+
+        if (layerAdd == 'penroads') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          map.removeLayer(groupAreaStats);
+          map.removeLayer(groupTrees);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'penroads') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+
+          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
+          var treeType = layerAddText;
+          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+        }
+
+        if (layerAdd == 'cenrotalacogon') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          map.removeLayer(groupAreaStats);
+          map.removeLayer(groupTrees);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'cenrotalacogon') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
+          var treeType = layerAddText;
+          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+        }
+
+        if (layerAdd == 'cenrotubay') {
+          legend_trees.addTo(map);
+          map.removeControl(legend_area);
+          map.removeLayer(groupAreaStats);
+          map.removeLayer(groupTrees);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'cenrotubay') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
+          var treeType = layerAddText;
+          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true) 
+        }
+
+
       }
 
     },
     startCollapsed: true
   });
+
   $('#base_map').multiselect({
     multiple: false,
-    onChange: function(option, checked, select) {
+    onChange: function(option) {
       var base_map = $(option).val();
-      if (base_map == 'osm') {
-        map.removeLayer(googleSat);
-        map.removeLayer(googleHybrid);
-        map.addLayer(osm);
-        map.removeLayer(bingMap);
-        map.removeLayer(bingHybrid);
-        map.removeLayer(bingImagery);
-      } else if (base_map == 'googleHybrid') {
-        map.addLayer(googleHybrid);
-        map.removeLayer(googleSat);
-        map.removeLayer(osm);
-        map.removeLayer(bingMap);
-        map.removeLayer(bingHybrid);
-        map.removeLayer(bingImagery);
-      } else if (base_map == 'bingmap') {
-        map.addLayer(bingMap);
-        map.removeLayer(googleSat);
-        map.removeLayer(osm);
-        map.removeLayer(googleHybrid);
-        map.removeLayer(bingHybrid);
-        map.removeLayer(bingImagery);
-      } else if (base_map == 'bingimagery') {
-        map.addLayer(bingImagery);
-        map.removeLayer(bingMap);
-        map.removeLayer(googleSat);
-        map.removeLayer(osm);
-        map.removeLayer(googleHybrid);
-        map.removeLayer(bingHybrid);
-      } else if (base_map == 'binghybrid') {
-        map.addLayer(bingHybrid);
-        map.removeLayer(bingMap);
-        map.removeLayer(googleSat);
-        map.removeLayer(osm);
-        map.removeLayer(googleHybrid);
-        map.removeLayer(bingImagery);
-      } else {
-        map.addLayer(googleSat);
-        map.removeLayer(osm);
-        map.removeLayer(googleHybrid);
-        map.removeLayer(bingMap);
-        map.removeLayer(bingHybrid);
+      for (var key in BASE_MAP) {
+          if(key == base_map){
+            map.addLayer(BASE_MAP[key]);
+          }else{
+            map.removeLayer(BASE_MAP[key]);
+          }
       }
     }
   });
+
   $('#trees').val('').multiselect({
     multiple: false,
     nonSelectedText: 'Select ITP Species',
@@ -1443,35 +1394,22 @@ $(document).ready(function() {
       var layer = $(option).val();
       var typeofQ = $('#q').val()
       if (checked && typeofQ == 'distri') {
-        LAYER_TYPE = 'trees';
-        for (var i = 0; i < LOADED_LAYERS.length; i++) {
-          var selectionNode = LOADED_LAYERS[i].node;
-          selectionNode.getElementsByTagName('input')[0].checked = false;
-          $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
-
-        }
         legend_trees.addTo(map);
         map.removeControl(legend_area);
-        map.removeLayer(groupAreaStats);
-        for (var i = 0; i < LOADED_LAYERS.length; i++) {
-          if (LOADED_LAYERS[i].value != 'trees') {
-            var selectionNode = LOADED_LAYERS[i].node;
-            selectionNode.getElementsByTagName('input')[0].checked = false;
-            $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+        var treesInput = $('div.item[data-value="trees"');
+        for(var i=0;i<treesInput.length;i++){
+          if(typeof treesInput[i].children[1] != 'undefined'){
+            if(treesInput[i].children[1].textContent == layer){
+              console.log(treesInput[i].children[1].textContent,layer);
+              $('div.item[data-value="trees"')[i].children[0].click();
+            }else{
+              if($('div.item[data-value="trees"')[i].children[0].checked){
+                $('div.item[data-value="trees"')[i].children[0].click();
+              };  
+            }
           }
         }
-        if (layer === 'Falcata') {
-          toogleTrees(FALCATA_GEOJSON, layer, true);
-        }
-        if (layer === 'Gmelina') {
-          toogleTrees(GMELINA_GEOJSON, layer, true);
-        }
-        if (layer === 'Mangium') {
-          toogleTrees(MANGIUM_GEOJSON, layer, true);
-        }
-        if (layer === 'Bagras') {
-          toogleTrees(BAGRAS_GEOJSON, layer, true);
-        }
+        
       }
 
     }
@@ -1749,11 +1687,12 @@ $(document).ready(function() {
     var brgyVal = $('#brgy').val();
     var munVAl = $('#citymun').val();
     var provVal = $('#prov').val();
-
+    LAYER_NAME = $('#trees').val();
     var dataGeojson = null;
     $.each(LAYERS_REPO, function(idx) {
       if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
         dataGeojson = LAYERS_REPO[idx][LAYER_NAME];
+        console.log(dataGeojson)
       };
     })
     FILTERED_LAYER = L.geoJson(dataGeojson, {
@@ -1765,7 +1704,7 @@ $(document).ready(function() {
         stroke: true,
         fillOpacity: 0
       },
-      filter: function(feature, layer) {
+      filter: function(feature) {
         if (munVAl != '-' && brgyVal != '-') {
           return (feature.properties.Bgy_Name == brgyVal && feature.properties.Mun_Name == munVAl && feature.properties.Pro_Name == provVal)
         } else if (munVAl != '-') {

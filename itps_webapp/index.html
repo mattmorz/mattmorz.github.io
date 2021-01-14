@@ -17,6 +17,23 @@
     <link rel="stylesheet" href="app/app.css" />
 </head>
 <body>
+    <!--LOADING MODAL-->
+    <div class="modal fade" role="dialog"  id="loadMe" data-backdrop="static">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div id="loaderWrap">
+                        <strong><div id="myItem1"
+                        class="ldBar label-center"
+                        data-preset="circle" 
+                        ></div>
+                        <p>Loading...please wait.</p></strong>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+
     <!-- optionally define the sidebar content via HTML markup -->
     <div id="sidebar" class="leaflet-sidebar collapsed" style="z-index: 999;">
 
@@ -385,23 +402,7 @@
 
     <div id="map"></div>
 
-      <!--LOADING MODAL-->
-    <div class="modal fade" role="dialog"  id="loadMe" data-backdrop="static">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <div id="loaderWrap">
-                    <strong><div id="myItem1"
-                    class="ldBar label-center"
-                    data-preset="circle" 
-                    ></div>
-                    <p>Loading...please wait.</p></strong>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-    </div>
+
 
     <div class="modal fade" role="dialog"  id="chartMe" data-backdrop="static">
         <div class="modal-dialog" role="document">
