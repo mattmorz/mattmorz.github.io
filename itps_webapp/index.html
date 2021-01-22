@@ -162,8 +162,7 @@
                                 <option value="binghybrid">Bing Hybrid</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            
+                        <div class="form-group">                          
                             <select id="layers" multiple="multiple" class="form-control">
                                 <option value="trees" data-section="Layers/ITP Distribution (Location and Extents)" data-index="1">Falcata</option>
                                 <option value="trees" data-section="Layers/ITP Distribution (Location and Extents)" data-index="2">Gmelina</option>
@@ -184,9 +183,6 @@
                                 <option value="others" data-section="Layers/ITP-related Layers" data-index="5">Wood Processing Plant</option>
                                 <option value="others" data-section="Layers/ITP-related Layers" data-index="6">Furniture Store</option>
                                 <option value="survey" data-section="Layers/ITP-related Layers/ITP FIeld Survey Locations" data-index="19">ADS Ground Truth</option>
-                                <!--<option value="survey" data-section="Layers/ITP-related Layers/ITP FIeld Survey Locations/Butuan" data-index="19">Plot Bounds Falcata</option>
-                                <option value="survey" data-section="Layers/ITP-related Layers/ITP FIeld Survey Locations/Butuan" data-index="19">Plot Perimeter Falcata</option>
-                                <option value="survey" data-section="Layers/ITP-related Layers/ITP FIeld Survey Locations/Butuan" data-index="19">Plot Points Falcata</option>-->
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Nasipit" data-index="20">2011</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Nasipit" data-index="20">2012</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Nasipit" data-index="20">2013</option>
@@ -202,7 +198,6 @@
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Talacogon" data-index="20">2016-2017</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Talacogon" data-index="20">2017-2018</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Talacogon" data-index="20">2018-2019</option>
-                               
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Loreto" data-index="20">Falcata</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Loreto" data-index="20">Gmelina</option>
                                 <option value="ownership" data-section="Layers/ITP-related Layers/Tree Plantation Ownerships/CTPO CENRO Tubay" data-index="20">Polygon</option>
@@ -226,10 +221,10 @@
                                 <option value="flood" data-section="Layers/ITP-related Layers/Flood Hazard Layers" data-index="19">50-year rain return period</option>
                                 <option value="flood" data-section="Layers/ITP-related Layers/Flood Hazard Layers" data-index="19">100-year rain return period</option>
                                 <option value="uas" data-section="Layers/ITP-related Layers" data-index="19">UAS Orthoimage</option>
-                                <option value="uas" data-section="Layers/ITP Suitable Areas" data-index="19">Falcata</option>
-                                <option value="uas" data-section="Layers/ITP Suitable Areas" data-index="19">Gmelina</option>
-                                <option value="uas" data-section="Layers/ITP Suitable Areas" data-index="19">Mangium</option>
-                                <option value="uas" data-section="Layers/ITP Suitable Areas" data-index="19">Bagras</option>
+                                <option value="areas" data-section="Layers/ITP Suitable Areas" data-index="19">Falcata</option>
+                                <option value="areas" data-section="Layers/ITP Suitable Areas" data-index="19">Gmelina</option>
+                                <option value="areas" data-section="Layers/ITP Suitable Areas" data-index="19">Mangium</option>
+                                <option value="areas" data-section="Layers/ITP Suitable Areas" data-index="19">Bagras</option>
                             </select>
                         </div>
                     </fieldset>
@@ -279,46 +274,7 @@
                             <!--<input type="button" class="btn btn-danger" value="Clear" style="width: 150px;" id="btnClear"/>-->
                         </div>
                     </fieldset>
-                </form>
-                <!--
-                <form id="filter1">
-                    <fieldset class="filter-border">
-                        <legend class="filter-border">ITP Suitable Areas by Locality</legend>
-                        <div class="form-group">
-                            <label for="trees1">Trees</label>
-                            <select id="trees1" class="form-control">
-                                <option value="Falcata">Falcata</option>
-                                <option value="Gmelina">Gmelina</option>
-                                <option value="Mangium">Mangium</option>
-                                <option value="Bagras">Bagras</option>                          
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="prov1">Location</label>
-                            <select id="prov1" class="form-control" name="prov">
-                                <option value="">Select Province</option>
-                                <option value="AGUSAN DEL NORTE">AGUSAN DEL NORTE</option>
-                                <option value="AGUSAN DEL SUR">AGUSAN DEL SUR</option>
-                                <option value="DINAGAT ISLANDS">DINAGAT ISLANDS</option>
-                                <option value="SURIGAO DEL NORTE">SURIGAO DEL NORTE</option>
-                                <option value="SURIGAO DEL SUR">SURIGAO DEL SUR</option>                          
-                            </select>
-                            <br/>
-                            <select id="citymun1" class="form-control" name="citymun">
-                                <option value="">Select Province First</option>               
-                            </select>
-                             <br/>
-                            <select id="brgy1" class="form-control" name="brgy">
-                                <option value="">Select City/Municipality First</option>                     
-                            </select>
-                        </div>
-                        <div class="form-group text-center">
-                            <input type="button" class="btn btn-info" value="Go" style="width: 150px;" id="btnGo1"/>
-                           <input type="button" class="btn btn-danger" value="Clear" style="width: 150px;" id="btnClear1"/>
-                        </div>
-                    </fieldset>
-                </form>    
-                -->                           
+                </form>                        
             </div> <!--enf of welcome-->
 
             

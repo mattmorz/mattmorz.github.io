@@ -7,7 +7,6 @@
  * Fixed base map z-index
  * Code refactor
  */
-
 const BASE_URL = window.location.href;
 const CARAGA_PLACES = BASE_URL + "js/caraga.json";
 
@@ -62,11 +61,7 @@ const DATA_SOURCE_URL = {
   FALCATA_CENRO_TALACOGON: BASE_URL + "data/NGP_CENROTalacogon_Falcata.json",
   FALCATA_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Falcata.json",
   MANGIUM_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Mangium.json",
-
 }
-//Standard leaflet map setup
-var map = L.map('map');
-map.setView([9.1204, 125.59], 8);
 
 //Layergroups for checking if layer is added
 var groupAreaStats = new L.layerGroup();
@@ -78,7 +73,7 @@ var groupSurvey = new L.layerGroup();
 var groupTPO = new L.layerGroup();
 
 var FILTERED_LAYER = null;
-var highlight;
+var HIGHLIGHT;
 
 var LAYERS_REPO = [];
 var ARR_LAYERS = [];
@@ -94,13 +89,15 @@ var MUN_AREA_STATS = null;
 var PROV_AREA_STATS = null;
 var LOADING_BAR = new ldBar("#myItem1");
 
+//Standard leaflet map setup
+var map = L.map('map');
 
 /**
  * adding/displaying/hiding tree layers
  * param(<string>,<string>,<boolean>)
  * param(GEOJSON URL, tree species name, checked or unchecked)
  **/
-function toogleTrees(URL, treeType, checked) {
+function toggleTrees(URL, treeType, checked) {
   LAYER_NAME = treeType;
   if ((groupTrees.getLayers().length == 0 || ADDED_LAYERS.includes(treeType) == false) && checked == true) {
     var percentComplete = 0;
@@ -208,7 +205,7 @@ function toogleTrees(URL, treeType, checked) {
 
 }
 
-function toogleTreesNGPOthers(URL, treeType, layerName, checked) {
+function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
   console.log(groupTreesNGPOther.getLayers());
   console.log(ADDED_LAYERS.includes(treeType));
   LAYER_NAME = layerName;
@@ -242,11 +239,11 @@ function toogleTreesNGPOthers(URL, treeType, layerName, checked) {
         var trees = data;
         var gp_layer = L.geoJSON(trees, {
           onEachFeature: function(feature, layer) {
-            var highlightProp = feature.properties;
+            var HIGHLIGHTProp = feature.properties;
             var popup = '<table border="1">';
-            for (i in highlightProp) {
+            for (i in HIGHLIGHTProp) {
               popup += '<tr><td>' + i + '</td>';
-              popup += '<td>' + highlightProp[i] + '</td></tr>';
+              popup += '<td>' + HIGHLIGHTProp[i] + '</td></tr>';
             }
             popup += '</table>';
             layer.bindPopup(popup);
@@ -330,7 +327,7 @@ function toogleTreesNGPOthers(URL, treeType, layerName, checked) {
 
 }
 
-function toogleTreesNGP(URL, treeType, layerName, checked) {
+function toggleTreesNGP(URL, treeType, layerName, checked) {
   LAYER_NAME = layerName;
 
   if ((groupTreesNGP.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
@@ -438,9 +435,9 @@ function toogleTreesNGP(URL, treeType, layerName, checked) {
 
 }
 
-function toogleAreaStats(URL, treeType, coverage, treeName, checked) {
-  LAYER_NAME = treeType;
-  if ((ADDED_LAYERS.includes(treeType) == false) && checked == true) {
+function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
+  LAYER_NAME = layerName;
+  if ((ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
@@ -564,14 +561,14 @@ function toogleAreaStats(URL, treeType, coverage, treeName, checked) {
         var addedLayer = groupAreaStats.getLayers();
         var addedLayerId = addedLayer[groupAreaStats.getLayers().length - 1]._leaflet_id;
         var obj = {}
-        obj[treeType] = addedLayerId;
+        obj[layerName] = addedLayerId;
         ARR_LAYERS.push(obj);
-        ADDED_LAYERS.push(treeType);
+        ADDED_LAYERS.push(layerName);
 
         var geojsonOBj = {};
         trees.features[0].properties.show = true;
-        geojsonOBj[treeType] = trees;
-        geojsonOBj[treeType]['show'] = true;
+        geojsonOBj[layerName] = trees;
+        geojsonOBj[layerName]['show'] = true;
         LAYERS_REPO.push(geojsonOBj);
 
         $.each(LAYERS_REPO, function(idx) {
@@ -588,12 +585,12 @@ function toogleAreaStats(URL, treeType, coverage, treeName, checked) {
       } //success
     });
 
-  } else if (ADDED_LAYERS.includes(treeType) && checked == true) {
+  } else if (ADDED_LAYERS.includes(layerName) && checked == true) {
     for (var i = 0; i < ARR_LAYERS.length; i++) {
-      console.log(ARR_LAYERS[i].hasOwnProperty(treeType))
-      if (ARR_LAYERS[i].hasOwnProperty(treeType)) {
-        console.log(ARR_LAYERS[i][treeType]);
-        var showLayer = groupAreaStats.getLayer(ARR_LAYERS[i][treeType]);
+      console.log(ARR_LAYERS[i].hasOwnProperty(layerName))
+      if (ARR_LAYERS[i].hasOwnProperty(layerName)) {
+        console.log(ARR_LAYERS[i][layerName]);
+        var showLayer = groupAreaStats.getLayer(ARR_LAYERS[i][layerName]);
         map.addLayer(showLayer);
       }
     }
@@ -606,12 +603,12 @@ function toogleAreaStats(URL, treeType, coverage, treeName, checked) {
     })
   } else if (checked == false) {
     console.log(groupAreaStats.getLayers());
-    console.log(treeType)
+    console.log(layerName)
     for (var i = 0; i < ARR_LAYERS.length; i++) {
-      console.log(ARR_LAYERS[i].hasOwnProperty(treeType))
-      if (ARR_LAYERS[i].hasOwnProperty(treeType)) {
-        console.log(ARR_LAYERS[i][treeType]);
-        var removeLayer = groupAreaStats.getLayer(ARR_LAYERS[i][treeType]);
+      console.log(ARR_LAYERS[i].hasOwnProperty(layerName))
+      if (ARR_LAYERS[i].hasOwnProperty(layerName)) {
+        console.log(ARR_LAYERS[i][layerName]);
+        var removeLayer = groupAreaStats.getLayer(ARR_LAYERS[i][layerName]);
         map.removeLayer(removeLayer);
       }
     }
@@ -654,8 +651,8 @@ function toggleSurveyLoc(URL, layerName, checked) {
         var trees = data;
         var gp_layer = L.geoJSON(trees, {
           onEachFeature: function(feature, layer) {
-            var highlightProp = feature.properties;
-            var popup = '<strong>Species:</strong> ' + highlightProp.Species + '</br><strong>Location:</strong> ' + highlightProp.Bgy_Name + ', ' + highlightProp.Mun_Name + ', ' + highlightProp.Pro_Name + ', ' + highlightProp.Reg_Name + '</br>' + '<strong>Area in hectares:</strong>' + parseFloat(highlightProp.Area_sqm / 10000).toFixed(2);
+            var HIGHLIGHTProp = feature.properties;
+            var popup = '<strong>Species:</strong> ' + HIGHLIGHTProp.Species + '</br><strong>Location:</strong> ' + HIGHLIGHTProp.Bgy_Name + ', ' + HIGHLIGHTProp.Mun_Name + ', ' + HIGHLIGHTProp.Pro_Name + ', ' + HIGHLIGHTProp.Reg_Name + '</br>' + '<strong>Area in hectares:</strong>' + parseFloat(HIGHLIGHTProp.Area_sqm / 10000).toFixed(2);
             layer.bindPopup(popup);
           },
           style: function(feature) {
@@ -772,8 +769,8 @@ function toggleTPO(URL, layerName, checked) {
         if (geom_type == 'Point') {
           var gp_layer = L.geoJSON(trees, {
             onEachFeature: function(feature, layer) {
-              var highlightProp = feature.properties;
-              var popup = '<strong>Species:</strong> ' + highlightProp.Species + '</br><strong>Location:</strong> ' + highlightProp.Bgy_Name + ', ' + highlightProp.Mun_Name + ', ' + highlightProp.Pro_Name + ', ' + highlightProp.Reg_Name + '</br>' + '<strong>Area in hectare:</strong>' + parseFloat(highlightProp.Area).toFixed(2) + '</br>' + '<strong>Owner:</strong>' + highlightProp.Owner;
+              var HIGHLIGHTProp = feature.properties;
+              var popup = '<strong>Species:</strong> ' + HIGHLIGHTProp.Species + '</br><strong>Location:</strong> ' + HIGHLIGHTProp.Bgy_Name + ', ' + HIGHLIGHTProp.Mun_Name + ', ' + HIGHLIGHTProp.Pro_Name + ', ' + HIGHLIGHTProp.Reg_Name + '</br>' + '<strong>Area in hectare:</strong>' + parseFloat(HIGHLIGHTProp.Area).toFixed(2) + '</br>' + '<strong>Owner:</strong>' + HIGHLIGHTProp.Owner;
               layer.bindPopup(popup);
             },
             pointToLayer: function(feature, latlng) {
@@ -793,8 +790,8 @@ function toggleTPO(URL, layerName, checked) {
         } else {
           var gp_layer = L.geoJSON(trees, {
             onEachFeature: function(feature, layer) {
-              var highlightProp = feature.properties;
-              var popup = '<strong>Species:</strong> ' + highlightProp.Species + '</br><strong>Location:</strong> ' + highlightProp.Bgy_Name + ', ' + highlightProp.Mun_Name + ', ' + highlightProp.Pro_Name + ', ' + highlightProp.Reg_Name + '</br>' + '<strong>Area in hectare:</strong>' + parseFloat(highlightProp.Area).toFixed(2) + '</br>' + '<strong>Owner:</strong>' + highlightProp.Owner;
+              var HIGHLIGHTProp = feature.properties;
+              var popup = '<strong>Species:</strong> ' + HIGHLIGHTProp.Species + '</br><strong>Location:</strong> ' + HIGHLIGHTProp.Bgy_Name + ', ' + HIGHLIGHTProp.Mun_Name + ', ' + HIGHLIGHTProp.Pro_Name + ', ' + HIGHLIGHTProp.Reg_Name + '</br>' + '<strong>Area in hectare:</strong>' + parseFloat(HIGHLIGHTProp.Area).toFixed(2) + '</br>' + '<strong>Owner:</strong>' + HIGHLIGHTProp.Owner;
               layer.bindPopup(popup);
             },
             style: function(feature) {
@@ -906,8 +903,8 @@ function toggleOtherLayer(URL, layerName, checked) {
         var trees = data;
         var gp_layer = L.geoJSON(trees, {
           onEachFeature: function(feature, layer) {
-            var highlightProp = feature.properties;
-            var popup = '<strong>Name:</strong> ' + highlightProp.Name + '<strong>';
+            var HIGHLIGHTProp = feature.properties;
+            var popup = '<strong>Name:</strong> ' + HIGHLIGHTProp.Name + '<strong>';
             layer.bindPopup(popup);
           },
           pointToLayer: function(feature, latlng) {
@@ -1016,18 +1013,22 @@ function loadLocs() {
 }
 
 $(document).ready(function() {
-
+  //set map view on Caraga Region Area
+  map.setView([9.1204, 125.59], 8);
 
   //Welcome Prompt
   $('#staticBackdrop').modal('show');
+
   //Enable tooltip
   $(function() {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip({ trigger: "hover" })
   });
+
+
+  //Reset loading % to 0 on modal hide
   $('#loadMe').on('hidden.bs.modal', function (e) {
     LOADING_BAR.set(0);
   })
-
 
   //Base Maps
   var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1074,7 +1075,6 @@ $(document).ready(function() {
     bingimagery: bingImagery,
     binghybrid: bingHybrid
   }
-
   //End Base Map
 
   //Controls
@@ -1145,9 +1145,9 @@ $(document).ready(function() {
 
         if (layerRemove == 'stats') {
           var layerName = layerRemoveText.replace(/[\/. ,:-]+/g, "_") + '_' + layerRemoveDataSection[2];
-          toogleAreaStats(null, layerName.toUpperCase(), layerRemoveText, layerRemoveDataSection[2], false);
+          toggleAreaStats(null, layerName.toUpperCase(), layerRemoveText, layerRemoveDataSection[2], false);
         }
-        if (layerRemove == 'trees') toogleTrees(null, layerRemoveText, false);
+        if (layerRemove == 'trees') toggleTrees(null, layerRemoveText, false);
         if (layerRemove == 'survey') toggleSurveyLoc(null, layerRemoveText, false);
         if (layerRemove == 'others') toggleOtherLayer(null, layerRemoveText, false);
         if (layerRemove == 'ownership') {
@@ -1156,11 +1156,11 @@ $(document).ready(function() {
         }
         if (layerRemove == 'denrcaraga') {
           var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(/\s/g, '_');
-          toogleTreesNGP(null, layerRemoveText, layerName.toUpperCase(), false);
+          toggleTreesNGP(null, layerRemoveText, layerName.toUpperCase(), false);
         }
         if (layerRemove == 'penroadn' || layerRemove == 'penroads' || layerRemove == 'cenrotalacogon' || layerRemove == 'cenrotubay') {
           var layerName = layerRemoveText + '_' + layerRemoveDataSection[3].replace(/\s/g, '_');
-          toogleTreesNGPOthers(null, layerRemoveText, layerName.toUpperCase(), false);
+          toggleTreesNGPOthers(null, layerRemoveText, layerName.toUpperCase(), false);
         }
       }
 
@@ -1174,6 +1174,7 @@ $(document).ready(function() {
         layerAddText = addedItems[0].text;
         layerAddDataSection = addedItems[0].section.split('/');
         LAYER_TYPE = layerAdd;
+
         if (layerAdd === 'trees') {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
@@ -1186,7 +1187,7 @@ $(document).ready(function() {
             }
           }
           var layerName = layerAddText.toUpperCase();
-          toogleTrees(DATA_SOURCE_URL[layerName], layerAddText, true);
+          toggleTrees(DATA_SOURCE_URL[layerName], layerAddText, true);
         }
 
         if (layerAdd === 'stats') {
@@ -1207,7 +1208,7 @@ $(document).ready(function() {
           var treeName = layerAddDataSection[2];
           var layerNameUpper = layerName.toUpperCase();
 
-          toogleAreaStats(DATA_SOURCE_URL[layerNameUpper], layerNameUpper, layerAddText, treeName, true);
+          toggleAreaStats(DATA_SOURCE_URL[layerNameUpper], layerNameUpper, layerAddText, treeName, true);
           legend_area.onAdd = function(map) {
             var div = L.DomUtil.create("div", "maplegend");
             var zeroTenColor = treeName == 'Falcata' ? '#edf8e9' : treeName == 'Gmelina' ? '#fee5d9' : treeName == 'Mangium' ? '#f2f0f7' : '#eff3ff';
@@ -1291,7 +1292,7 @@ $(document).ready(function() {
           }
           var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
           var treeType = layerAddText;
-          toogleTreesNGP(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+          toggleTreesNGP(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
         }
 
         if (layerAdd == 'penroadn') {
@@ -1308,7 +1309,7 @@ $(document).ready(function() {
           }
           var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
           var treeType = layerAddText;
-          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+          toggleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
         }
 
         if (layerAdd == 'penroads') {
@@ -1326,7 +1327,7 @@ $(document).ready(function() {
 
           var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
           var treeType = layerAddText;
-          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+          toggleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
         }
 
         if (layerAdd == 'cenrotalacogon') {
@@ -1343,7 +1344,7 @@ $(document).ready(function() {
           }
           var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
           var treeType = layerAddText;
-          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
+          toggleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
         }
 
         if (layerAdd == 'cenrotubay') {
@@ -1360,7 +1361,7 @@ $(document).ready(function() {
           }
           var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
           var treeType = layerAddText;
-          toogleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true) 
+          toggleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true) 
         }
 
 
@@ -1461,8 +1462,8 @@ $(document).ready(function() {
 
   //MAP Interaction
   map.on('click', function(e) {
-    if (highlight) {
-      map.removeLayer(highlight)
+    if (HIGHLIGHT) {
+      map.removeLayer(HIGHLIGHT)
     }
     var x = e.latlng.lng;
     var y = e.latlng.lat;
@@ -1471,20 +1472,20 @@ $(document).ready(function() {
     if (LAYER_TYPE == 'trees' || LAYER_TYPE == 'denrcaraga') {
       LAYER_DATA = leafletPip.pointInLayer([x, y], LAYER_GEOJSON, true);
       if (LAYER_DATA[0]) {
-        var highlightProp = LAYER_DATA[0].feature.properties;
+        var HIGHLIGHTProp = LAYER_DATA[0].feature.properties;
         var feature = LAYER_DATA[0].feature;
-        highlight = new L.geoJson(feature, {
+        HIGHLIGHT = new L.geoJson(feature, {
           style: {
             color: 'yellow',
             fillColor: 'white'
           }
         });
-        var popup = '<strong>Species:</strong> ' + highlightProp.Species + '</br><strong>Location:</strong> ' + highlightProp.Bgy_Name + ', ' + highlightProp.Mun_Name + ', ' + highlightProp.Pro_Name + ', ' + highlightProp.Reg_Name + '</br>' + '<strong>Area in hectares:</strong>' + parseFloat(highlightProp.Area_sqm / 10000).toFixed(2);
+        var popup = '<strong>Species:</strong> ' + HIGHLIGHTProp.Species + '</br><strong>Location:</strong> ' + HIGHLIGHTProp.Bgy_Name + ', ' + HIGHLIGHTProp.Mun_Name + ', ' + HIGHLIGHTProp.Pro_Name + ', ' + HIGHLIGHTProp.Reg_Name + '</br>' + '<strong>Area in hectares:</strong>' + parseFloat(HIGHLIGHTProp.Area_sqm / 10000).toFixed(2);
         map.on('popupclose', function() {
-          map.removeLayer(highlight)
+          map.removeLayer(HIGHLIGHT)
         });
         setTimeout(function() {
-          highlight.addTo(map);
+          HIGHLIGHT.addTo(map);
           map.openPopup(popup, e.latlng);
         }, 50);
       } else {
@@ -1495,36 +1496,36 @@ $(document).ready(function() {
     if (LAYER_TYPE == 'stats') {
       LAYER_DATA = leafletPip.pointInLayer([x, y], LAYER_GEOJSON, true);
       if (LAYER_DATA[0]) {
-        var highlightProp = LAYER_DATA[0].feature.properties;
+        var HIGHLIGHTProp = LAYER_DATA[0].feature.properties;
         var location = '';
-        if (highlightProp.Bgy_Name) {
-          location = highlightProp.Bgy_Name + ', ' + highlightProp.Mun_Name + ', ' + highlightProp.Pro_Name;
-        } else if (highlightProp.Mun_Name) {
-          location = highlightProp.Mun_Name + ', ' + highlightProp.Pro_Name;
+        if (HIGHLIGHTProp.Bgy_Name) {
+          location = HIGHLIGHTProp.Bgy_Name + ', ' + HIGHLIGHTProp.Mun_Name + ', ' + HIGHLIGHTProp.Pro_Name;
+        } else if (HIGHLIGHTProp.Mun_Name) {
+          location = HIGHLIGHTProp.Mun_Name + ', ' + HIGHLIGHTProp.Pro_Name;
         } else {
-          location = highlightProp.Pro_Name;
+          location = HIGHLIGHTProp.Pro_Name;
         }
         var feature = LAYER_DATA[0].feature;
-        highlight = new L.geoJson(feature, {
+        HIGHLIGHT = new L.geoJson(feature, {
           style: {
             color: 'yellow',
             fillColor: 'white'
           },
         });
-        var dataFalcata = highlightProp.Falc_Ar_h;
-        var dataGmelina = highlightProp.Gmel_Ar_h;
-        var dataMangium = highlightProp.Mang_Ar_h;
-        var dataBagras = highlightProp.Bagr_Ar_h;
+        var dataFalcata = HIGHLIGHTProp.Falc_Ar_h;
+        var dataGmelina = HIGHLIGHTProp.Gmel_Ar_h;
+        var dataMangium = HIGHLIGHTProp.Mang_Ar_h;
+        var dataBagras = HIGHLIGHTProp.Bagr_Ar_h;
         var newData = [dataFalcata, dataGmelina, dataMangium, dataBagras];
         myChart.data["datasets"][0]["data"] = newData;
         myChart.options.title.text = location;
         myChart.update();
         setTimeout(function() {
-          highlight.addTo(map);
+          HIGHLIGHT.addTo(map);
           $('#chartMe').modal('show');
         }, 50);
         $('#chartMe').on('hidden.bs.modal', function(e) {
-          map.removeLayer(highlight);
+          map.removeLayer(HIGHLIGHT);
         })
       }
     }
@@ -1548,7 +1549,7 @@ $(document).ready(function() {
 
   $('#the-basics .typeahead').typeahead({
     hint: true,
-    highlight: true,
+    HIGHLIGHT: true,
     minLength: 1
   }, {
     name: 'barangays',
