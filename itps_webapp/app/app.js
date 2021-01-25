@@ -88,7 +88,6 @@ var LAYER_DATA_GEOJSON = null;
 var BRGY_AREA_STATS = null;
 var MUN_AREA_STATS = null;
 var PROV_AREA_STATS = null;
-var LOADING_BAR = new ldBar("#myItem1");
 
 //Standard leaflet map setup
 var map = L.map('map');
@@ -102,6 +101,7 @@ function toggleTrees(URL, treeType, checked) {
   LAYER_NAME = treeType;
   if ((groupTrees.getLayers().length == 0 || ADDED_LAYERS.includes(treeType) == false) && checked == true) {
     var percentComplete = 0;
+
     $.ajax({
       xhr: function() {
         var xhr = new window.XMLHttpRequest();
@@ -109,18 +109,14 @@ function toggleTrees(URL, treeType, checked) {
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");          
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-              setTimeout(function() {
-              console.log('completed...');
-              $('.modal').each(function(){
-                $(this).modal('hide');
-              });
-              }, 500);
-               
-            }
+            console.log(percentComplete)
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
@@ -128,7 +124,8 @@ function toggleTrees(URL, treeType, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-        $('#loadMe').modal('show');
+       waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
+       waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
       },
       success: function(data) {
         console.log('ready');
@@ -153,7 +150,7 @@ function toggleTrees(URL, treeType, checked) {
           }).addTo(map);
 
           console.log('added to map');
-          LOADING_BAR.set(100);
+         
           groupTrees.addLayer(treeLayer);
 
           var addedLayer = groupTrees.getLayers();
@@ -174,7 +171,7 @@ function toggleTrees(URL, treeType, checked) {
               LAYERS_REPO[idx][LAYER_NAME].show = true;
               LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
               console.log('added LAYER_GEOJSON-->', LAYER_NAME)
-              
+
             };
           })
       } //success
@@ -216,23 +213,19 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
   if ((groupTreesNGPOther.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-              setTimeout(function() {
-              console.log('completed...');
-              $('.modal').each(function(){
-                $(this).modal('hide');
-              });
-              }, 500);
-               
-            }
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            console.log(percentComplete)
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
@@ -240,8 +233,9 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-        $('#loadMe').modal('show');
-      },
+         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+       },
       success: function(data) {
         var trees = data;
         var gp_layer = L.geoJSON(trees, {
@@ -270,7 +264,7 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
         }).addTo(map);
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
-        LOADING_BAR.set(100);
+
         groupTreesNGPOther.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupTreesNGPOther.getLayers();
@@ -341,20 +335,19 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
   if ((groupTreesNGP.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete)
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-                setTimeout(function() {
-                  console.log('completed...');
-                  $('#loadMe').modal('hide');
-                }, 500);
-            }
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
@@ -362,8 +355,9 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-        $('#loadMe').modal('show');
-      },
+         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+       },
       success: function(data) {
         console.log('ready');
         //Add canvas layer
@@ -386,7 +380,7 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
           interactive: true,
         }).addTo(map);
         console.log('added to map');
-        LOADING_BAR.set(100);
+
         groupTreesNGP.addLayer(treeLayer);
         console.log(ARR_LAYERS);
         var addedLayer = groupTreesNGP.getLayers();
@@ -451,23 +445,19 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
   if ((ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-             setTimeout(function() {
-            console.log('completed...');
-            $('.modal').each(function(){
-              $(this).modal('hide');
-            });
-          }, 500);
-               
-            }
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            console.log(percentComplete)
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
@@ -475,8 +465,9 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-        $('#loadMe').modal('show');
-      },
+         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+       },
       success: function(data) {
         console.log('ready');
         //Add canvas layer
@@ -571,7 +562,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
         }).addTo(map);
 
         console.log('added to map');
-        LOADING_BAR.set(100);
+
         groupAreaStats.addLayer(treeLayer);
         console.log(ARR_LAYERS);
         var addedLayer = groupAreaStats.getLayers();
@@ -591,7 +582,8 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
           if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
             LAYERS_REPO[idx][LAYER_NAME].show = true;
             LAYER_GEOJSON = L.geoJson(LAYERS_REPO[idx][LAYER_NAME]);
-            console.log('added LAYER_GEOJSON-->', LAYER_NAME)
+            console.log('added LAYER_GEOJSON-->', LAYER_NAME);
+            waitingDialog.hide();
           };
         })
         setTimeout(function() {
@@ -641,29 +633,29 @@ function toggleSurveyLoc(URL, layerName, checked) {
     $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-             setTimeout(function() {
-            console.log('completed...');
-            $('.modal').each(function(){
-              $(this).modal('hide');
-            });
-          }, 500);
-               
-            }
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            console.log(percentComplete)
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
+      beforeSend:function(){
+         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+       },
       success: function(data) {
 
         var trees = data;
@@ -687,7 +679,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
         }).addTo(map);
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
-        LOADING_BAR.set(100);
+
         groupSurvey.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupSurvey.getLayers();
@@ -761,29 +753,29 @@ function toggleTPO(URL, layerName, checked) {
     $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-             setTimeout(function() {
-            console.log('completed...');
-            $('.modal').each(function(){
-              $(this).modal('hide');
-            });
-          }, 500);
-               
-            }
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            console.log(percentComplete)
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
+      beforeSend:function(){
+         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+       },
       success: function(data) {
         var trees = data;
         var geom_type = trees.features[0].geometry.type;
@@ -832,7 +824,7 @@ function toggleTPO(URL, layerName, checked) {
 
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
-        LOADING_BAR.set(100);
+
         groupTPO.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupTPO.getLayers();
@@ -899,31 +891,28 @@ function toggleOtherLayer(URL, layerName, checked) {
   if ((groupOtherLayer.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
-            var percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            /* construct manually */
-            var LOADING_BAR = new ldBar("#myItem1");
-            LOADING_BAR.set(percentComplete);
-            if (percentComplete == 100) {
-             setTimeout(function() {
-            console.log('completed...');
-            $('.modal').each(function(){
-              $(this).modal('hide');
-            });
-          }, 500);
-               
-            }
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            console.log(percentComplete)
+              waitingDialog.progress(percentComplete);
+              if (percentComplete == 100){
+                  waitingDialog.message('Preparing map...')
+                  setTimeout(function () {
+                    waitingDialog.hide();
+                  }, 1000);
+              }
           }
         }, false);
         return xhr;
       },
       type: 'GET',
       beforeSend:function(){
-        $('#loadMe').modal('show');
-      },
+         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+       },
       url: URL,
       success: function(data) {
         var trees = data;
@@ -950,7 +939,7 @@ function toggleOtherLayer(URL, layerName, checked) {
 
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
-        LOADING_BAR.set(100);
+
         groupOtherLayer.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupOtherLayer.getLayers();
@@ -1040,6 +1029,7 @@ function loadLocs() {
 }
 
 $(document).ready(function() {
+
   //set map view on Caraga Region Area
   map.setView([9.1204, 125.59], 8);
 
@@ -1050,12 +1040,6 @@ $(document).ready(function() {
   $(function() {
     $('[data-toggle="tooltip"]').tooltip({ trigger: "hover" })
   });
-
-
-  //Reset loading % to 0 on modal hide
-  $('#loadMe').on('hidden.bs.modal', function (e) {
-    LOADING_BAR.set(0);
-  })
 
   //Base Maps
   var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
