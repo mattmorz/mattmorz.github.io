@@ -58,6 +58,7 @@ const DATA_SOURCE_URL = {
   BAGRAS_PENRO_ADN: BASE_URL + "data/NGP_PENROAdS_Bagras.json",
   FALCATA_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Falcata.json",
   MANGIUM_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Mangium.json",
+  BAGRAS_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Bagras.json",
   FALCATA_CENRO_TALACOGON: BASE_URL + "data/NGP_CENROTalacogon_Falcata.json",
   FALCATA_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Falcata.json",
   MANGIUM_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Mangium.json",
@@ -122,6 +123,7 @@ function toggleTrees(URL, treeType, checked) {
         $('#loadMe').modal('show');
       },
       success: function(data) {
+       
         console.log('ready');
         if (percentComplete == 100) {
           //Add canvas layer
@@ -145,7 +147,7 @@ function toggleTrees(URL, treeType, checked) {
           }).addTo(map);
 
           console.log('added to map');
-          LOADING_BAR.set(100);
+          
           groupTrees.addLayer(treeLayer);
 
           var addedLayer = groupTrees.getLayers();
@@ -166,14 +168,17 @@ function toggleTrees(URL, treeType, checked) {
               LAYERS_REPO[idx][LAYER_NAME].show = true;
               LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
               console.log('added LAYER_GEOJSON-->', LAYER_NAME)
-              setTimeout(function() {
-                console.log('completed...');
-                $('#loadMe').modal('hide');
-              }, 500);
+              
             };
           })
 
         }//100
+        setTimeout(function() {
+          console.log('completed...');
+          $('.modal').each(function(){
+            $(this).modal('hide');
+          });
+        }, 500);
       } //success
     });
 
@@ -209,10 +214,7 @@ function toggleTrees(URL, treeType, checked) {
 }
 
 function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
-  console.log(groupTreesNGPOther.getLayers());
-  console.log(ADDED_LAYERS.includes(treeType));
   LAYER_NAME = layerName;
-  //console.log(ARR_LAYERS.trees[treeType]);
   if ((groupTreesNGPOther.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
@@ -225,10 +227,12 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
             var LOADING_BAR = new ldBar("#myItem1");
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-              setTimeout(function() {
-                console.log('completed...');
-                $('#loadMe').modal('hide');
-              }, 500);
+             setTimeout(function() {
+            console.log('completed...');
+            $('.modal').each(function(){
+              $(this).modal('hide');
+            });
+          }, 500);
                
             }
           }
@@ -254,10 +258,10 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
             layer.bindPopup(popup);
           },
           style: function(feature) {
-            var treeType = feature.properties.Species;
-            var trees = treeType.split(',');
+            //var treeType = feature.properties.Species;
+            //var trees = treeType.split(',');
             return {
-              fillColor: trees.includes('Falcata') == true || trees.includes(' Falcata') ? "#006d2c" : trees.includes('Gmelina') || trees.includes(' Gmelina') ? "#a50f15" : trees.includes('Mangium') || trees.includes(' Mangium') ? "#54278f" : trees.includes('Bagras') || trees.includes(' Bagras') ? "#08519c" : "#fff",
+              fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : treeType == 'Bagras' ? "#08519c" : "#fff",
               color: "black",
               weight: .5,
               fill: true,
@@ -458,10 +462,12 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
             var LOADING_BAR = new ldBar("#myItem1");
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-              setTimeout(function() {
-                console.log('completed...');
-                $('#loadMe').modal('hide');
-              }, 500);
+             setTimeout(function() {
+            console.log('completed...');
+            $('.modal').each(function(){
+              $(this).modal('hide');
+            });
+          }, 500);
                
             }
           }
@@ -646,10 +652,12 @@ function toggleSurveyLoc(URL, layerName, checked) {
             var LOADING_BAR = new ldBar("#myItem1");
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-              setTimeout(function() {
-                console.log('completed...');
-                $('#loadMe').modal('hide');
-              }, 500);
+             setTimeout(function() {
+            console.log('completed...');
+            $('.modal').each(function(){
+              $(this).modal('hide');
+            });
+          }, 500);
                
             }
           }
@@ -764,10 +772,12 @@ function toggleTPO(URL, layerName, checked) {
             var LOADING_BAR = new ldBar("#myItem1");
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-              setTimeout(function() {
-                console.log('completed...');
-                $('#loadMe').modal('hide');
-              }, 500);
+             setTimeout(function() {
+            console.log('completed...');
+            $('.modal').each(function(){
+              $(this).modal('hide');
+            });
+          }, 500);
                
             }
           }
@@ -900,10 +910,12 @@ function toggleOtherLayer(URL, layerName, checked) {
             var LOADING_BAR = new ldBar("#myItem1");
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-              setTimeout(function() {
-                console.log('completed...');
-                $('#loadMe').modal('hide');
-              }, 500);
+             setTimeout(function() {
+            console.log('completed...');
+            $('.modal').each(function(){
+              $(this).modal('hide');
+            });
+          }, 500);
                
             }
           }
