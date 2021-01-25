@@ -1044,7 +1044,7 @@ $(document).ready(function() {
 
   //Reset loading % to 0 on modal hide
   $('#loadMe').on('hidden.bs.modal', function (e) {
-    //LOADING_BAR.set(0);
+    LOADING_BAR.set(0);
   })
 
   //Base Maps
