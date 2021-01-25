@@ -112,7 +112,15 @@ function toggleTrees(URL, treeType, checked) {
             /* construct manually */
             var LOADING_BAR = new ldBar("#myItem1");          
             LOADING_BAR.set(percentComplete);
-            
+            if (percentComplete == 100) {
+              setTimeout(function() {
+              console.log('completed...');
+              $('.modal').each(function(){
+                $(this).modal('hide');
+              });
+              }, 500);
+               
+            }
           }
         }, false);
         return xhr;
@@ -123,9 +131,7 @@ function toggleTrees(URL, treeType, checked) {
         $('#loadMe').modal('show');
       },
       success: function(data) {
-       
         console.log('ready');
-        if (percentComplete == 100) {
           //Add canvas layer
           var ddata = omnivore.topojson.parse(data);
           var trees = ddata.toGeoJSON();
@@ -147,7 +153,7 @@ function toggleTrees(URL, treeType, checked) {
           }).addTo(map);
 
           console.log('added to map');
-          
+          LOADING_BAR.set(100);
           groupTrees.addLayer(treeLayer);
 
           var addedLayer = groupTrees.getLayers();
@@ -171,14 +177,6 @@ function toggleTrees(URL, treeType, checked) {
               
             };
           })
-
-        }//100
-        setTimeout(function() {
-          console.log('completed...');
-          $('.modal').each(function(){
-            $(this).modal('hide');
-          });
-        }, 500);
       } //success
     });
 
@@ -227,12 +225,12 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
             var LOADING_BAR = new ldBar("#myItem1");
             LOADING_BAR.set(percentComplete);
             if (percentComplete == 100) {
-             setTimeout(function() {
-            console.log('completed...');
-            $('.modal').each(function(){
-              $(this).modal('hide');
-            });
-          }, 500);
+              setTimeout(function() {
+              console.log('completed...');
+              $('.modal').each(function(){
+                $(this).modal('hide');
+              });
+              }, 500);
                
             }
           }
