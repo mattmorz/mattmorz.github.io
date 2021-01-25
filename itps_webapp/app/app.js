@@ -101,10 +101,9 @@ function toggleTrees(URL, treeType, checked) {
   LAYER_NAME = treeType;
   if ((groupTrees.getLayers().length == 0 || ADDED_LAYERS.includes(treeType) == false) && checked == true) {
     var percentComplete = 0;
-    $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();;
+        var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
@@ -119,6 +118,9 @@ function toggleTrees(URL, treeType, checked) {
       },
       type: 'GET',
       url: URL,
+      beforeSend:function(){
+        $('#loadMe').modal('show');
+      },
       success: function(data) {
         console.log('ready');
         if (percentComplete == 100) {
@@ -143,6 +145,7 @@ function toggleTrees(URL, treeType, checked) {
           }).addTo(map);
 
           console.log('added to map');
+          LOADING_BAR.set(100);
           groupTrees.addLayer(treeLayer);
 
           var addedLayer = groupTrees.getLayers();
@@ -211,7 +214,6 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
   LAYER_NAME = layerName;
   //console.log(ARR_LAYERS.trees[treeType]);
   if ((groupTreesNGPOther.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
-    $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
         var xhr = new window.XMLHttpRequest();;
@@ -235,6 +237,9 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
       },
       type: 'GET',
       url: URL,
+      beforeSend:function(){
+        $('#loadMe').modal('show');
+      },
       success: function(data) {
         var trees = data;
         var gp_layer = L.geoJSON(trees, {
@@ -263,6 +268,7 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
         }).addTo(map);
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
+        LOADING_BAR.set(100);
         groupTreesNGPOther.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupTreesNGPOther.getLayers();
@@ -331,7 +337,6 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
   LAYER_NAME = layerName;
 
   if ((groupTreesNGP.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
-    $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
         var xhr = new window.XMLHttpRequest();;
@@ -354,6 +359,9 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
       },
       type: 'GET',
       url: URL,
+      beforeSend:function(){
+        $('#loadMe').modal('show');
+      },
       success: function(data) {
         console.log('ready');
         //Add canvas layer
@@ -376,6 +384,7 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
           interactive: true,
         }).addTo(map);
         console.log('added to map');
+        LOADING_BAR.set(100);
         groupTreesNGP.addLayer(treeLayer);
         console.log(ARR_LAYERS);
         var addedLayer = groupTreesNGP.getLayers();
@@ -438,7 +447,6 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
 function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
   LAYER_NAME = layerName;
   if ((ADDED_LAYERS.includes(layerName) == false) && checked == true) {
-    $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
         var xhr = new window.XMLHttpRequest();;
@@ -462,6 +470,9 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
       },
       type: 'GET',
       url: URL,
+      beforeSend:function(){
+        $('#loadMe').modal('show');
+      },
       success: function(data) {
         console.log('ready');
         //Add canvas layer
@@ -556,6 +567,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
         }).addTo(map);
 
         console.log('added to map');
+        LOADING_BAR.set(100);
         groupAreaStats.addLayer(treeLayer);
         console.log(ARR_LAYERS);
         var addedLayer = groupAreaStats.getLayers();
@@ -669,6 +681,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
         }).addTo(map);
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
+        LOADING_BAR.set(100);
         groupSurvey.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupSurvey.getLayers();
@@ -811,6 +824,7 @@ function toggleTPO(URL, layerName, checked) {
 
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
+        LOADING_BAR.set(100);
         groupTPO.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupTPO.getLayers();
@@ -875,7 +889,6 @@ function toggleTPO(URL, layerName, checked) {
 function toggleOtherLayer(URL, layerName, checked) {
   LAYER_NAME = layerName;
   if ((groupOtherLayer.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
-    $('#loadMe').modal('show');
     $.ajax({
       xhr: function() {
         var xhr = new window.XMLHttpRequest();;
@@ -898,6 +911,9 @@ function toggleOtherLayer(URL, layerName, checked) {
         return xhr;
       },
       type: 'GET',
+      beforeSend:function(){
+        $('#loadMe').modal('show');
+      },
       url: URL,
       success: function(data) {
         var trees = data;
@@ -924,6 +940,7 @@ function toggleOtherLayer(URL, layerName, checked) {
 
         map.fitBounds(gp_layer.getBounds());
         console.log('added to map');
+        LOADING_BAR.set(100);
         groupOtherLayer.addLayer(gp_layer);
         console.log(ARR_LAYERS);
         var addedLayer = groupOtherLayer.getLayers();
@@ -1027,7 +1044,7 @@ $(document).ready(function() {
 
   //Reset loading % to 0 on modal hide
   $('#loadMe').on('hidden.bs.modal', function (e) {
-    LOADING_BAR.set(0);
+    //LOADING_BAR.set(0);
   })
 
   //Base Maps
