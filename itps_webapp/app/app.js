@@ -109,10 +109,9 @@ function toggleTrees(URL, treeType, checked) {
         xhr.addEventListener("progress", function(evt) {
           if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
@@ -221,7 +220,7 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
             console.log(percentComplete)
               waitingDialog.progress(percentComplete);
               if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+                 
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
@@ -343,7 +342,7 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
             console.log(percentComplete)
               waitingDialog.progress(percentComplete);
               if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+                 
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
@@ -453,7 +452,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
             console.log(percentComplete)
               waitingDialog.progress(percentComplete);
               if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+                 
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
@@ -641,7 +640,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
             console.log(percentComplete)
               waitingDialog.progress(percentComplete);
               if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+                 
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
@@ -761,7 +760,7 @@ function toggleTPO(URL, layerName, checked) {
             console.log(percentComplete)
               waitingDialog.progress(percentComplete);
               if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+                 
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
@@ -899,7 +898,7 @@ function toggleOtherLayer(URL, layerName, checked) {
             console.log(percentComplete)
               waitingDialog.progress(percentComplete);
               if (percentComplete == 100){
-                  waitingDialog.message('Preparing map...')
+                 
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);

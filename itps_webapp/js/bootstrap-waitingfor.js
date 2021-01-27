@@ -141,7 +141,9 @@
 		 */
 		hide: function () {
 			if (typeof $dialog !== 'undefined') {
-				$dialog.modal('hide');
+				//$dialog.modal('hide');
+				$dialog.hide();
+				$('.modal-backdrop').hide();
 			}
 		},
 		/**
