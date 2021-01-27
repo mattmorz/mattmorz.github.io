@@ -109,7 +109,7 @@ function toggleTrees(URL, treeType, checked) {
         xhr.addEventListener("progress", function(evt) {
           console.log(evt.lengthComputable);
           console.log(evt.loaded);
-          if (evt.lengthComputable) {
+         //if (evt.lengthComputable) {
             
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
@@ -119,7 +119,7 @@ function toggleTrees(URL, treeType, checked) {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
@@ -220,17 +220,18 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           console.log(evt.lengthComputable);
-          if (evt.lengthComputable) {
+          console.log(evt.loaded);
+         //if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                 
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
@@ -343,17 +344,19 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          if (evt.lengthComputable) {
+          console.log(evt.lengthComputable);
+          console.log(evt.loaded);
+         //if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                 
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
@@ -454,17 +457,19 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          if (evt.lengthComputable) {
+          console.log(evt.lengthComputable);
+          console.log(evt.loaded);
+         //if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                 
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
@@ -643,17 +648,19 @@ function toggleSurveyLoc(URL, layerName, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          if (evt.lengthComputable) {
+          console.log(evt.lengthComputable);
+          console.log(evt.loaded);
+         //if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                 
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
@@ -764,17 +771,19 @@ function toggleTPO(URL, layerName, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          if (evt.lengthComputable) {
+          console.log(evt.lengthComputable);
+          console.log(evt.loaded);
+         //if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                 
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
@@ -903,17 +912,19 @@ function toggleOtherLayer(URL, layerName, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          if (evt.lengthComputable) {
+          console.log(evt.lengthComputable);
+          console.log(evt.loaded);
+         //if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete)
+            console.log(percentComplete);
               waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){
-                 
+              if (percentComplete == 100){                
                   setTimeout(function () {
                     waitingDialog.hide();
                   }, 1000);
               }
-          }
+          //}
         }, false);
         return xhr;
       },
