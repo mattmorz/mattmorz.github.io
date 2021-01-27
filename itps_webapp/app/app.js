@@ -107,7 +107,9 @@ function toggleTrees(URL, treeType, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
+          console.log(evt.lengthComputable);
           if (evt.lengthComputable) {
+            
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
               waitingDialog.progress(percentComplete);
@@ -120,10 +122,9 @@ function toggleTrees(URL, treeType, checked) {
         }, false);
         return xhr;
       },
-      type: 'GET',
+      type:'GET',
       url: URL,
       beforeSend:function(){
-        
         waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
         waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
         waitingDialog.progress(0);
@@ -217,6 +218,7 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
         var xhr = new window.XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
+          console.log(evt.lengthComputable);
           if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete)
