@@ -108,6 +108,7 @@ function toggleTrees(URL, treeType, checked) {
         //Download progress
         xhr.addEventListener("progress", function(evt) {
           console.log(evt.lengthComputable);
+          console.log(evt.loaded);
           if (evt.lengthComputable) {
             
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
