@@ -123,8 +123,10 @@ function toggleTrees(URL, treeType, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-       waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-       waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+        
+        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+        waitingDialog.progress(0);
       },
       success: function(data) {
         console.log('ready');
@@ -232,9 +234,10 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
-       },
+        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+        waitingDialog.progress(0);
+      },
       success: function(data) {
         var trees = data;
         var gp_layer = L.geoJSON(trees, {
@@ -354,9 +357,10 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
-       },
+        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+        waitingDialog.progress(0);
+      },
       success: function(data) {
         console.log('ready');
         //Add canvas layer
@@ -464,9 +468,10 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
-       },
+        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+        waitingDialog.progress(0);
+      },
       success: function(data) {
         console.log('ready');
         //Add canvas layer
@@ -652,9 +657,10 @@ function toggleSurveyLoc(URL, layerName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.progress(0);
+        waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
         waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
-       },
+      },
       success: function(data) {
 
         var trees = data;
@@ -772,9 +778,10 @@ function toggleTPO(URL, layerName, checked) {
       type: 'GET',
       url: URL,
       beforeSend:function(){
-         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
+        waitingDialog.progress(0);
+        waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
         waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
-       },
+      },
       success: function(data) {
         var trees = data;
         var geom_type = trees.features[0].geometry.type;
@@ -909,9 +916,10 @@ function toggleOtherLayer(URL, layerName, checked) {
       },
       type: 'GET',
       beforeSend:function(){
-         waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});           
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
-       },
+        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
+        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+        waitingDialog.progress(0);
+      },
       url: URL,
       success: function(data) {
         var trees = data;
@@ -1026,6 +1034,17 @@ function loadLocs() {
   });
   return BRGYS;
 }
+
+$(document).ajaxStart(function() {
+  console.log('AJAX START')
+});
+
+$(document).ajaxStop(function(){
+  console.log('AJAX STOP');
+  setTimeout(function () {
+    waitingDialog.hide();
+  }, 1000);
+});
 
 $(document).ready(function() {
 
