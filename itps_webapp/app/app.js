@@ -5,9 +5,12 @@
  * v1.0.2
  * Added progress indicator
  * Fixed base map z-index
+ * Changed loading/progress indicator
+ * Fixed Chrome problem
  * Code refactor
  */
 const BASE_URL = window.location.href;
+//const BASE_URL = "https://raw.githubusercontent.com/mattmorz/mattmorz.github.io/master/itps_webapp/";
 const CARAGA_PLACES = BASE_URL + "js/caraga.json";
 
 const DATA_SOURCE_URL = {
@@ -28,8 +31,8 @@ const DATA_SOURCE_URL = {
   CITY_MUNICIPALITY_BAGRAS: BASE_URL + "data/ITP_Area_Municipalit.json",
   PROVINCE_BAGRAS: BASE_URL + "data/ITP_Area_Province.json",
   WOOD_PROCESSING_PLANT: BASE_URL + "data/WPPs_Caragaregion.json",
-  FURNITURE_STORE : BASE_URL + "data/FurnitureStores_Caragaregion.json",
-  ADS_GROUND_TRUTH:  BASE_URL + "data/ADS_Ground_Truth.json",
+  FURNITURE_STORE: BASE_URL + "data/FurnitureStores_Caragaregion.json",
+  ADS_GROUND_TRUTH: BASE_URL + "data/ADS_Ground_Truth.json",
   CTPO_CENRO_NASIPIT_2011: BASE_URL + "data/TPO_Nasipit_2011.json",
   CTPO_CENRO_NASIPIT_2012: BASE_URL + "data/TPO_Nasipit_2012.json",
   CTPO_CENRO_NASIPIT_2013: BASE_URL + "data/PTPOC2013_CENRONasipit.json",
@@ -60,8 +63,8 @@ const DATA_SOURCE_URL = {
   MANGIUM_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Mangium.json",
   BAGRAS_PENRO_ADS: BASE_URL + "data/NGP_PENROAdS_Bagras.json",
   FALCATA_CENRO_TALACOGON: BASE_URL + "data/NGP_CENROTalacogon_Falcata.json",
-  FALCATA_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Falcata.json",
-  MANGIUM_CENRO_TUBAY:BASE_URL + "data/NGP_CENROTubay_Mangium.json",
+  FALCATA_CENRO_TUBAY: BASE_URL + "data/NGP_CENROTubay_Falcata.json",
+  MANGIUM_CENRO_TUBAY: BASE_URL + "data/NGP_CENROTubay_Mangium.json",
 }
 
 //Layergroups for checking if layer is added
@@ -104,79 +107,93 @@ function toggleTrees(URL, treeType, checked) {
 
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          console.log(evt.lengthComputable);
-          console.log(evt.loaded,evt.total);
-         //if (evt.lengthComputable) {
-            
+          if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
-          //}
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          } else {
+            console.log('chrome');
+            var loaded = parseInt(evt.loaded / 10);
+            var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
+            percentComplete = parseFloat(loaded / total) * 100;
+            console.log(loaded, total)
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          }
         }, false);
         return xhr;
       },
-      type:'GET',
+      type: 'GET',
       url: URL,
-      beforeSend:function(){
-        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+      beforeSend: function() {
+        waitingDialog.show('Initializing...', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."]);
         waitingDialog.progress(0);
       },
       success: function(data) {
         console.log('ready');
-          //Add canvas layer
-          var ddata = omnivore.topojson.parse(data);
-          var trees = ddata.toGeoJSON();
-          var treeLayer = L.vectorGrid.slicer(trees, {
-            rendererFactory: L.canvas.tile,
-            vectorTileLayerStyles: {
-              sliced: {
-                fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : "#08519c",
-                color: "black",
-                weight: .1,
-                fill: true,
-                stroke: true,
-                fillOpacity: .8
-              }
-            },
-            maxZoom: 22,
-            indexMaxZoom: 5,
-            interactive: true,
-          }).addTo(map);
+        //Add canvas layer
+        var ddata = omnivore.topojson.parse(data);
+        var trees = ddata.toGeoJSON();
+        var treeLayer = L.vectorGrid.slicer(trees, {
+          rendererFactory: L.canvas.tile,
+          vectorTileLayerStyles: {
+            sliced: {
+              fillColor: treeType == 'Falcata' ? "#006d2c" : treeType == 'Gmelina' ? "#a50f15" : treeType == 'Mangium' ? "#54278f" : "#08519c",
+              color: "black",
+              weight: .1,
+              fill: true,
+              stroke: true,
+              fillOpacity: .8
+            }
+          },
+          maxZoom: 22,
+          indexMaxZoom: 5,
+          interactive: true,
+        }).addTo(map);
 
-          console.log('added to map');
-         
-          groupTrees.addLayer(treeLayer);
+        console.log('added to map');
 
-          var addedLayer = groupTrees.getLayers();
-          var addedLayerId = addedLayer[groupTrees.getLayers().length - 1]._leaflet_id;
-          var obj = {}
-          obj[treeType] = addedLayerId;
-          ARR_LAYERS.push(obj);
-          ADDED_LAYERS.push(treeType);
+        groupTrees.addLayer(treeLayer);
 
-          var geojsonOBj = {};
-          trees.features[0].properties.show = true;
-          geojsonOBj[treeType] = trees;
-          geojsonOBj[treeType]['show'] = true;
-          LAYERS_REPO.push(geojsonOBj);
+        var addedLayer = groupTrees.getLayers();
+        var addedLayerId = addedLayer[groupTrees.getLayers().length - 1]._leaflet_id;
+        var obj = {}
+        obj[treeType] = addedLayerId;
+        ARR_LAYERS.push(obj);
+        ADDED_LAYERS.push(treeType);
 
-          $.each(LAYERS_REPO, function(idx) {
-            if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
-              LAYERS_REPO[idx][LAYER_NAME].show = true;
-              LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
-              console.log('added LAYER_GEOJSON-->', LAYER_NAME)
+        var geojsonOBj = {};
+        trees.features[0].properties.show = true;
+        geojsonOBj[treeType] = trees;
+        geojsonOBj[treeType]['show'] = true;
+        LAYERS_REPO.push(geojsonOBj);
 
-            };
-          })
+        $.each(LAYERS_REPO, function(idx) {
+          if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
+            LAYERS_REPO[idx][LAYER_NAME].show = true;
+            LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
+            console.log('added LAYER_GEOJSON-->', LAYER_NAME)
+
+          };
+        })
       } //success
     });
 
@@ -216,30 +233,43 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
   if ((groupTreesNGPOther.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          console.log(evt.lengthComputable);
-          console.log(evt.loaded);
-         //if (evt.lengthComputable) {
-            
+          if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
-          //}
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          } else {
+            console.log('chrome');
+            var loaded = parseInt(evt.loaded / 10);
+            var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
+            percentComplete = parseFloat(loaded / total) * 100;
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          }
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
-      beforeSend:function(){
-        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+      beforeSend: function() {
+        waitingDialog.show('Initializing...', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."]);
         waitingDialog.progress(0);
       },
       success: function(data) {
@@ -341,30 +371,43 @@ function toggleTreesNGP(URL, treeType, layerName, checked) {
   if ((groupTreesNGP.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          console.log(evt.lengthComputable);
-          console.log(evt.loaded);
-         //if (evt.lengthComputable) {
-            
+          if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
-          //}
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          } else {
+            console.log('chrome');
+            var loaded = parseInt(evt.loaded / 10);
+            var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
+            percentComplete = parseFloat(loaded / total) * 100;
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          }
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
-      beforeSend:function(){
-        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+      beforeSend: function() {
+        waitingDialog.show('Initializing...', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."]);
         waitingDialog.progress(0);
       },
       success: function(data) {
@@ -454,30 +497,43 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
   if ((ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          console.log(evt.lengthComputable);
-          console.log(evt.loaded);
-         //if (evt.lengthComputable) {
-            
+          if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
-          //}
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          } else {
+            console.log('chrome');
+            var loaded = parseInt(evt.loaded / 10);
+            var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
+            percentComplete = parseFloat(loaded / total) * 100;
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          }
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
-      beforeSend:function(){
-        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+      beforeSend: function() {
+        waitingDialog.show('Initializing...', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."]);
         waitingDialog.progress(0);
       },
       success: function(data) {
@@ -507,10 +563,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
                 }
               } else if (area <= 10 && area > 0) {
                 return {
-                  fillColor: treeName == 'Falcata' ? "#edf8e9" :
-                    treeName == 'Gmelina' ? "#fee5d9" :
-                    treeName == 'Mangium' ? "#f2f0f7" :
-                    "#eff3ff",
+                  fillColor: treeName == 'Falcata' ? "#edf8e9" : treeName == 'Gmelina' ? "#fee5d9" : treeName == 'Mangium' ? "#f2f0f7" : "#eff3ff",
                   color: "black",
                   weight: .5,
                   fill: true,
@@ -519,10 +572,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
                 }
               } else if (area > 10 && area <= 20) {
                 return {
-                  fillColor: treeName == 'Falcata' ? "#bae4b3" :
-                    treeName == 'Gmelina' ? "#fcae91" :
-                    treeName == 'Mangium' ? "#cbc9e2" :
-                    "#bdd7e7",
+                  fillColor: treeName == 'Falcata' ? "#bae4b3" : treeName == 'Gmelina' ? "#fcae91" : treeName == 'Mangium' ? "#cbc9e2" : "#bdd7e7",
                   color: "black",
                   weight: .5,
                   fill: true,
@@ -531,10 +581,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
                 }
               } else if (area > 20 && area <= 30) {
                 return {
-                  fillColor: treeName == 'Falcata' ? "#74c476" :
-                    treeName == 'Gmelina' ? "#fb6a4a" :
-                    treeName == 'Mangium' ? "#9e9ac8" :
-                    "#6baed6",
+                  fillColor: treeName == 'Falcata' ? "#74c476" : treeName == 'Gmelina' ? "#fb6a4a" : treeName == 'Mangium' ? "#9e9ac8" : "#6baed6",
                   color: "black",
                   weight: .5,
                   fill: true,
@@ -543,10 +590,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
                 }
               } else if (area > 30 && area <= 40) {
                 return {
-                  fillColor: treeName == 'Falcata' ? "#31a354" :
-                    treeName == 'Gmelina' ? "#de2d26" :
-                    treeName == 'Mangium' ? "#756bb1" :
-                    "#3182bd",
+                  fillColor: treeName == 'Falcata' ? "#31a354" : treeName == 'Gmelina' ? "#de2d26" : treeName == 'Mangium' ? "#756bb1" : "#3182bd",
                   color: "black",
                   weight: .5,
                   fill: true,
@@ -555,10 +599,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
                 }
               } else {
                 return {
-                  fillColor: treeName == 'Falcata' ? "#006d2c" :
-                    treeName == 'Gmelina' ? "#a50f15" :
-                    treeName == 'Mangium' ? "#54278f" :
-                    "#08519c",
+                  fillColor: treeName == 'Falcata' ? "#006d2c" : treeName == 'Gmelina' ? "#a50f15" : treeName == 'Mangium' ? "#54278f" : "#08519c",
                   color: "black",
                   weight: .5,
                   fill: true,
@@ -650,26 +691,30 @@ function toggleSurveyLoc(URL, layerName, checked) {
         xhr.addEventListener("progress", function(evt) {
           console.log(evt.lengthComputable);
           console.log(evt.loaded);
-         //if (evt.lengthComputable) {
-            
-            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
+          //if (evt.lengthComputable) {
+
+          percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+          console.log(percentComplete);
+          waitingDialog.progress(percentComplete);
+          if (percentComplete == 100) {
+            setTimeout(function() {
+              waitingDialog.hide();
+            }, 1000);
+          }
           //}
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
-      beforeSend:function(){
+      beforeSend: function() {
         waitingDialog.progress(0);
-        waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+        waitingDialog.show('Fetching data', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."])
       },
       success: function(data) {
 
@@ -763,7 +808,7 @@ function toggleSurveyLoc(URL, layerName, checked) {
 
 function toggleTPO(URL, layerName, checked) {
   LAYER_NAME = layerName;
- 
+
   if ((groupTPO.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $('#loadMe').modal('show');
     $.ajax({
@@ -773,26 +818,30 @@ function toggleTPO(URL, layerName, checked) {
         xhr.addEventListener("progress", function(evt) {
           console.log(evt.lengthComputable);
           console.log(evt.loaded);
-         //if (evt.lengthComputable) {
-            
-            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
-            console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
+          //if (evt.lengthComputable) {
+
+          percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+          console.log(percentComplete);
+          waitingDialog.progress(percentComplete);
+          if (percentComplete == 100) {
+            setTimeout(function() {
+              waitingDialog.hide();
+            }, 1000);
+          }
           //}
         }, false);
         return xhr;
       },
       type: 'GET',
       url: URL,
-      beforeSend:function(){
+      beforeSend: function() {
         waitingDialog.progress(0);
-        waitingDialog.show('Fetching data',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."])
+        waitingDialog.show('Fetching data', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."])
       },
       success: function(data) {
         var trees = data;
@@ -909,29 +958,42 @@ function toggleOtherLayer(URL, layerName, checked) {
   if ((groupOtherLayer.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
     $.ajax({
       xhr: function() {
-        var xhr = new window.XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         //Download progress
         xhr.addEventListener("progress", function(evt) {
-          console.log(evt.lengthComputable);
-          console.log(evt.loaded);
-         //if (evt.lengthComputable) {
-            
+          if (evt.lengthComputable) {
             percentComplete = parseFloat(evt.loaded / evt.total) * 100;
             console.log(percentComplete);
-              waitingDialog.progress(percentComplete);
-              if (percentComplete == 100){                
-                  setTimeout(function () {
-                    waitingDialog.hide();
-                  }, 1000);
-              }
-          //}
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          } else {
+            console.log('chrome');
+            var loaded = parseInt(evt.loaded / 10);
+            var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
+            percentComplete = parseFloat(loaded / total) * 100;
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          }
         }, false);
         return xhr;
       },
       type: 'GET',
-      beforeSend:function(){
-        waitingDialog.show('Initializing...',{dialogSize: 'm', progressType: ' bg-success',rtl:false});      
-        waitingDialog.animate(["Fetching data.","Fetching data..","Fetching data...","Fetching data...."]);
+      beforeSend: function() {
+        waitingDialog.show('Initializing...', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."]);
         waitingDialog.progress(0);
       },
       url: URL,
@@ -1053,9 +1115,9 @@ $(document).ajaxStart(function() {
   console.log('AJAX START')
 });
 
-$(document).ajaxStop(function(){
+$(document).ajaxStop(function() {
   console.log('AJAX STOP');
-  setTimeout(function () {
+  setTimeout(function() {
     waitingDialog.hide();
   }, 1000);
 });
@@ -1070,7 +1132,9 @@ $(document).ready(function() {
 
   //Enable tooltip
   $(function() {
-    $('[data-toggle="tooltip"]').tooltip({ trigger: "hover" })
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: "hover"
+    })
   });
 
   //Base Maps
@@ -1194,7 +1258,7 @@ $(document).ready(function() {
         if (layerRemove == 'survey') toggleSurveyLoc(null, layerRemoveText, false);
         if (layerRemove == 'others') toggleOtherLayer(null, layerRemoveText, false);
         if (layerRemove == 'ownership') {
-          var layerName = layerRemoveDataSection[3].replace(/[\/. ,:-]+/g, "_")+'_'+layerRemoveText.replace(/[\/. ,:-]+/g, "_");
+          var layerName = layerRemoveDataSection[3].replace(/[\/. ,:-]+/g, "_") + '_' + layerRemoveText.replace(/[\/. ,:-]+/g, "_");
           toggleTPO(null, layerName.toUpperCase(), false)
         }
         if (layerRemove == 'denrcaraga') {
@@ -1303,7 +1367,7 @@ $(document).ready(function() {
             }
           }
           var URL = null;
-          var layerName = layerAddText.replace(/\s/g, '_');          
+          var layerName = layerAddText.replace(/\s/g, '_');
           toggleSurveyLoc(DATA_SOURCE_URL[layerName.toUpperCase()], layerAddText, true)
         }
 
@@ -1317,7 +1381,7 @@ $(document).ready(function() {
               $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
             }
           }
-          var layerName = layerAddDataSection[3].replace(/[\/. ,:-]+/g, "_")+'_'+layerAddText.replace(/[\/. ,:-]+/g, "_");
+          var layerName = layerAddDataSection[3].replace(/[\/. ,:-]+/g, "_") + '_' + layerAddText.replace(/[\/. ,:-]+/g, "_");
           toggleTPO(DATA_SOURCE_URL[layerName.toUpperCase()], layerName.toUpperCase(), true);
         }
 
@@ -1404,7 +1468,7 @@ $(document).ready(function() {
           }
           var layerName = layerAddText + '_' + layerAddDataSection[3].replace(/\s/g, '_');
           var treeType = layerAddText;
-          toggleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true) 
+          toggleTreesNGPOthers(DATA_SOURCE_URL[layerName.toUpperCase()], treeType, layerName.toUpperCase(), true)
         }
 
 
@@ -1419,11 +1483,11 @@ $(document).ready(function() {
     onChange: function(option) {
       var base_map = $(option).val();
       for (var key in BASE_MAP) {
-          if(key == base_map){
-            map.addLayer(BASE_MAP[key]);
-          }else{
-            map.removeLayer(BASE_MAP[key]);
-          }
+        if (key == base_map) {
+          map.addLayer(BASE_MAP[key]);
+        } else {
+          map.removeLayer(BASE_MAP[key]);
+        }
       }
     }
   });
@@ -1441,19 +1505,19 @@ $(document).ready(function() {
         legend_trees.addTo(map);
         map.removeControl(legend_area);
         var treesInput = $('div.item[data-value="trees"');
-        for(var i=0;i<treesInput.length;i++){
-          if(typeof treesInput[i].children[1] != 'undefined'){
-            if(treesInput[i].children[1].textContent == layer){
-              console.log(treesInput[i].children[1].textContent,layer);
+        for (var i = 0; i < treesInput.length; i++) {
+          if (typeof treesInput[i].children[1] != 'undefined') {
+            if (treesInput[i].children[1].textContent == layer) {
+              console.log(treesInput[i].children[1].textContent, layer);
               $('div.item[data-value="trees"')[i].children[0].click();
-            }else{
-              if($('div.item[data-value="trees"')[i].children[0].checked){
+            } else {
+              if ($('div.item[data-value="trees"')[i].children[0].checked) {
                 $('div.item[data-value="trees"')[i].children[0].click();
-              };  
+              };
             }
           }
         }
-        
+
       }
 
     }
