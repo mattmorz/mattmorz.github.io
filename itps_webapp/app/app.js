@@ -511,7 +511,7 @@ function toggleAreaStats(URL, layerName, coverage, treeName, checked) {
             }
           } else {
             console.log('chrome');
-            var loaded = parseInt(evt.loaded / 10);
+            var loaded = parseInt(evt.loaded);
             var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
             percentComplete = parseFloat(loaded / total) * 100;
             console.log(percentComplete);
