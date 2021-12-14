@@ -130,3 +130,6 @@ select#brgy{
   .tt-suggestion p {
     margin: 0;
   }
+  .leaflet-popup-content{
+      overflow: auto!important;
+  }
