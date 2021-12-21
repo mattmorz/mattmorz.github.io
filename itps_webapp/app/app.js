@@ -69,11 +69,16 @@ const DATA_SOURCE_URL = {
   FALCATA_CENRO_TALACOGON: BASE_URL + "data/NGP_CENROTalacogon_Falcata.json",
   FALCATA_CENRO_TUBAY: BASE_URL + "data/NGP_CENROTubay_Falcata.json",
   MANGIUM_CENRO_TUBAY: BASE_URL + "data/NGP_CENROTubay_Mangium.json",
+  ALIENABLE_AND_DISPOSABLE_LANDS_2015: BASE_URL + "data/R13_AlienableAndDisposableLands_2015.json",
+  NGP_YEAR_2011_2020: BASE_URL + "data/R13_NGP_Year2011-2020.json",
+  PROTECTED_AREAS: BASE_URL + "data/R13_ProtectedAreas.json",
+  TIMBERLAND_2015: BASE_URL + "data/R13_Timberland2015.json",
 }
 
 //Layergroups for checking if layer is added
 var groupAreaStats = new L.layerGroup();
 var groupSuitableAreas = new L.layerGroup();
+var groupLandClassification = new L.layerGroup();
 var groupTrees = new L.layerGroup();
 var groupTreesNGP = new L.layerGroup();
 var groupTreesNGPOther = new L.layerGroup();
@@ -364,6 +369,134 @@ function toggleTreesNGPOthers(URL, treeType, layerName, checked) {
       if (ARR_LAYERS[i].hasOwnProperty(layerName)) {
         console.log(ARR_LAYERS[i][layerName]);
         var removeLayer = groupTreesNGPOther.getLayer(ARR_LAYERS[i][layerName]);
+        map.removeLayer(removeLayer);
+      }
+    }
+    $.each(LAYERS_REPO, function(idx) {
+      if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
+        LAYERS_REPO[idx][LAYER_NAME].show = false;
+        console.log('set show to false-->', LAYER_NAME)
+      };
+    })
+  } else {
+    console.log('ehhh no condition met')
+  }
+
+}
+
+//TOPOJSON
+function toggleLandClassification(URL, land_class, layerName, checked) {
+  LAYER_NAME = layerName;
+
+  if ((groupLandClassification.getLayers().length == 0 || ADDED_LAYERS.includes(layerName) == false) && checked == true) {
+    $.ajax({
+      xhr: function() {
+        var xhr = new XMLHttpRequest();
+        //Download progress
+        xhr.addEventListener("progress", function(evt) {
+          if (evt.lengthComputable) {
+            percentComplete = parseFloat(evt.loaded / evt.total) * 100;
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          } else {
+            console.log('chrome');
+            var loaded = parseInt(evt.loaded / 10);
+            var total = parseInt(evt.target.getResponseHeader('Content-Length'), 10);
+            percentComplete = parseFloat(loaded / total) * 100;
+            console.log(percentComplete);
+            waitingDialog.progress(percentComplete);
+            if (percentComplete == 100) {
+              setTimeout(function() {
+                waitingDialog.hide();
+              }, 1000);
+            }
+          }
+        }, false);
+        return xhr;
+      },
+      type: 'GET',
+      url: URL,
+      beforeSend: function() {
+        waitingDialog.show('Initializing...', {
+          dialogSize: 'm',
+          progressType: ' bg-success',
+          rtl: false
+        });
+        waitingDialog.animate(["Fetching data.", "Fetching data..", "Fetching data...", "Fetching data...."]);
+        waitingDialog.progress(0);
+      },
+      success: function(data) {
+        console.log('ready');
+        //Add canvas layer
+        var ddata = omnivore.topojson.parse(data);
+        var trees = ddata.toGeoJSON();
+        var treeLayer = L.vectorGrid.slicer(trees, {
+          rendererFactory: L.canvas.tile,
+          vectorTileLayerStyles: {
+            sliced: {
+              fillColor: land_class == 'Alienable and Disposable Lands 2015' ? "#cd8966" : land_class == 'NGP Year 2011-2020' ? "#cccd65" : land_class == 'Protected Areas' ? "#d69dbd" : "#b4d79d",
+              color: "black",
+              weight: .1,
+              fill: true,
+              stroke: true,
+              fillOpacity: .8
+            }
+          },
+          maxZoom: 22,
+          indexMaxZoom: 5,
+          interactive: true,
+        }).addTo(map);
+        console.log('added to map');
+
+        groupLandClassification.addLayer(treeLayer);
+        console.log(ARR_LAYERS);
+        var addedLayer = groupLandClassification.getLayers();
+        var addedLayerId = addedLayer[groupLandClassification.getLayers().length - 1]._leaflet_id;
+        var obj = {}
+        obj[layerName] = addedLayerId;
+        ARR_LAYERS.push(obj);
+        ADDED_LAYERS.push(layerName);
+
+        var geojsonOBj = {};
+        trees.features[0].properties.show = true;
+        geojsonOBj[layerName] = trees;
+        geojsonOBj[layerName]['show'] = true;
+        LAYERS_REPO.push(geojsonOBj);
+
+        $.each(LAYERS_REPO, function(idx) {
+          if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
+            LAYERS_REPO[idx][LAYER_NAME].show = true;
+            LAYER_GEOJSON.addData(LAYERS_REPO[idx][LAYER_NAME]);
+            console.log('added LAYER_GEOJSON-->', LAYER_NAME)
+          };
+        })
+      } //success
+    });
+  } else if (ADDED_LAYERS.includes(layerName) && checked == true) {
+    for (var i = 0; i < ARR_LAYERS.length; i++) {
+      console.log(ARR_LAYERS[i].hasOwnProperty(layerName))
+      if (ARR_LAYERS[i].hasOwnProperty(layerName)) {
+        console.log(ARR_LAYERS[i][layerName]);
+        var showLayer = groupLandClassification.getLayer(ARR_LAYERS[i][layerName]);
+        map.addLayer(showLayer);
+      }
+    }
+    $.each(LAYERS_REPO, function(idx) {
+      if (LAYERS_REPO[idx].hasOwnProperty(LAYER_NAME)) {
+        LAYERS_REPO[idx][LAYER_NAME].show = true;
+        console.log('set show to true-->', LAYER_NAME)
+      };
+    })
+  } else if (checked == false) {
+    for (var i = 0; i < ARR_LAYERS.length; i++) {
+      if (ARR_LAYERS[i].hasOwnProperty(layerName)) {
+        console.log(ARR_LAYERS[i][layerName]);
+        var removeLayer = groupLandClassification.getLayer(ARR_LAYERS[i][layerName]);
         map.removeLayer(removeLayer);
       }
     }
@@ -1591,6 +1724,7 @@ $(document).ready(function() {
     separate: true
   });
   map.addControl(loading)
+
   var legend_trees = L.control({
     position: "topright"
   });
@@ -1603,6 +1737,20 @@ $(document).ready(function() {
     div.innerHTML += '<i style="background: #ffff00"></i><span>Bagras</span><br>';
     return div;
   };
+
+  var legend_land_class = L.control({
+    position: "topright"
+  });
+  legend_land_class.onAdd = function(map) {
+    var div = L.DomUtil.create("div", "maplegend");
+    div.innerHTML += "<h4>Land Classification of ITPs</h4>";
+    div.innerHTML += '<i style="background: #cd8966"></i><span>Alienable or Disposable</span><br>';
+    div.innerHTML += '<i style="background: #cccd65"></i><span>National Greening Program</span><br>';
+    div.innerHTML += '<i style="background: #d69dbd"></i><span>Protected Areas</span><br>';
+    div.innerHTML += '<i style="background: #b4d79d"></i><span>Timberland</span><br>';
+    return div;
+  };
+
   var legend_area = L.control({
     position: "topright"
   });
@@ -1658,13 +1806,18 @@ $(document).ready(function() {
         layerRemoveText = removedItems[0].text;
         layerRemoveDataSection = removedItems[0].section.split('/');
         layerRemoveLayerName = layerRemoveText + '_' + layerRemoveDataSection[2];
-        console.log('SUITABILITY_'+layerRemoveText.toUpperCase())
         if (layerRemove == 'stats') {
           var layerName = layerRemoveText.replace(/[\/. ,:-]+/g, "_") + '_' + layerRemoveDataSection[2];
           toggleAreaStats(null, layerName.toUpperCase(), layerRemoveText, layerRemoveDataSection[2], false);
         }
         if (layerRemove == 'trees') toggleTrees(null, layerRemoveText, false);
-        if (layerRemove == 'areas') toggleSuitabilityAreas(null, 'SUITABILITY_'+layerRemoveText.toUpperCase(), layerRemoveText, false)
+        if (layerRemove == 'areas') toggleSuitabilityAreas(null, 'SUITABILITY_'+layerRemoveText.toUpperCase(), layerRemoveText, false);
+        if (layerRemove == 'land_classification') {
+            layerName = layerRemoveText.replace(/[^A-Z0-9]+/ig, "_");
+            layerNameUpper = layerName.toUpperCase();
+            toggleLandClassification(null, layerRemoveText, layerNameUpper, false)
+        }
+
         if (layerRemove == 'survey') toggleSurveyLoc(null, layerRemoveText, false);
         if (layerRemove == 'others') toggleOtherLayer(null, layerRemoveText, false);
         if (layerRemove == 'ownership') {
@@ -1696,6 +1849,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupAreaStats);
           map.removeLayer(groupSuitableAreas);
           for (var i = 0; i < LOADED_LAYERS.length; i++) {
@@ -1709,9 +1863,29 @@ $(document).ready(function() {
           toggleTrees(DATA_SOURCE_URL[layerName], layerAddText, true);
         }
 
+        if (layerAdd === 'land_classification') {
+          legend_land_class.addTo(map);
+          map.removeControl(legend_area);
+          map.removeControl(legend_trees);
+          map.removeControl(legend_suitable);
+          map.removeLayer(groupAreaStats);
+          map.removeLayer(groupSuitableAreas);
+          for (var i = 0; i < LOADED_LAYERS.length; i++) {
+            if (LOADED_LAYERS[i].value != 'land_classification') {
+              var selectionNode = LOADED_LAYERS[i].node;
+              selectionNode.getElementsByTagName('input')[0].checked = false;
+              $('.item[data-key="' + LOADED_LAYERS[i].id + '"] span.remove-selected').click();
+            }
+          }
+          var layerName = layerAddText.replace(/[^A-Z0-9]+/ig, "_");
+          var layerNameUpper = layerName.toUpperCase();
+          toggleLandClassification(DATA_SOURCE_URL[layerNameUpper], layerAddText, layerNameUpper, true)
+        }
+
         if (layerAdd === 'stats') {
           map.removeControl(legend_trees);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupTrees);
           map.removeLayer(groupTreesNGP);
           map.removeLayer(groupSuitableAreas);
@@ -1781,6 +1955,7 @@ $(document).ready(function() {
         if (layerAdd === 'others') {
           map.removeControl(legend_area);
           map.removeControl(legend_trees);
+          map.removeControl(legend_land_class);
           map.removeControl(legend_suitable);
           for (var i = 0; i < LOADED_LAYERS.length; i++) {
             if (LOADED_LAYERS[i].value != 'others') {
@@ -1797,6 +1972,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           for (var i = 0; i < LOADED_LAYERS.length; i++) {
             if (LOADED_LAYERS[i].value != 'survey') {
               var selectionNode = LOADED_LAYERS[i].node;
@@ -1813,6 +1989,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           for (var i = 0; i < LOADED_LAYERS.length; i++) {
             if (LOADED_LAYERS[i].value != 'ownership') {
               var selectionNode = LOADED_LAYERS[i].node;
@@ -1828,6 +2005,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupAreaStats);
           map.removeLayer(groupTrees);
           map.removeLayer(groupSuitableAreas);
@@ -1847,6 +2025,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupAreaStats);
           map.removeLayer(groupTrees);
           map.removeLayer(groupSuitableAreas);
@@ -1866,6 +2045,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupAreaStats);
           map.removeLayer(groupTrees);
           map.removeLayer(groupSuitableAreas);
@@ -1886,6 +2066,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupAreaStats);
           map.removeLayer(groupTrees);
           map.removeLayer(groupSuitableAreas);
@@ -1905,6 +2086,7 @@ $(document).ready(function() {
           legend_trees.addTo(map);
           map.removeControl(legend_area);
           map.removeControl(legend_suitable);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupAreaStats);
           map.removeLayer(groupTrees);
           map.removeLayer(groupSuitableAreas);
@@ -1923,6 +2105,7 @@ $(document).ready(function() {
         if (layerAdd == 'areas'){
           map.removeControl(legend_trees);
           map.removeControl(legend_area);
+          map.removeControl(legend_land_class);
           map.removeLayer(groupTrees);
           map.removeLayer(groupTreesNGP);
           map.removeLayer(groupAreaStats);
@@ -2118,6 +2301,43 @@ $(document).ready(function() {
         console.log('no feature found...')
       }
     }
+
+    if (LAYER_TYPE == 'land_classification') {
+      LAYER_DATA = leafletPip.pointInLayer([x, y], LAYER_GEOJSON, true);
+      if (LAYER_DATA[0]) {
+        var HIGHLIGHTProp = LAYER_DATA[0].feature.properties;
+        var feature = LAYER_DATA[0].feature;
+        HIGHLIGHT = new L.geoJson(feature, {
+          style: {
+            color: 'blue',
+            fillColor: 'white'
+          }
+        });
+
+        var html = "<table  class='table table-bordered' style='width:500px;overflow-x:auto;height:auto'>";                   
+        var properties=feature.properties;
+        html+='<tr>';
+        for (var x in properties) {
+          html+='<td>'+x+'</td>';
+        }
+        html+='</tr><tr>';
+        for (var x in properties){
+          html+='<td>'+properties[x]+'</td>';
+        }
+        html+='</tr></table>';
+
+        map.on('popupclose', function() {
+          map.removeLayer(HIGHLIGHT)
+        });
+        setTimeout(function() {
+          HIGHLIGHT.addTo(map);
+          map.openPopup(html, e.latlng);
+        }, 50);
+      } else {
+        console.log('no feature found...')
+      }
+    }
+
 
     if (LAYER_TYPE == 'stats') {
       LAYER_DATA = leafletPip.pointInLayer([x, y], LAYER_GEOJSON, true);
