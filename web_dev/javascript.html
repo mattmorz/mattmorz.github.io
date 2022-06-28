@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JavaScript</title>
+		
+		
+	</head>
+<body>
+	<p>Full Name: <span id="full_name"></span></p>
+	<h3>My Fave Movies</h3>
+	<button onclick="showMovies();">Show My Fave Movies</button>
+	<ul id="lst_movies">
+		
+	</ul>
+	<script type="text/javascript">
+		const FIRST_NAME = "Edsel Matt";
+		const MIDDLE_NAME = " Otacan ";
+		const LAST_NAME = " Morales ";
+		let FAVE_MOVIES = [
+			{
+				"title": "Hustle",
+				"year": 2022,
+				"genre": ['comedy','drama']
+			},
+			{
+				"title": "About Time",
+				"year": 2013,
+				"genre": ['romance','fantasy']
+			},
+			{
+				"title": "The Prestige",
+				"year": 2006,
+				"genre": ['mystery']
+			}
+			
+		]
+		FAVE_MOVIES.push(
+			{
+				"title": "Meet Joe Black",
+				"year": 1998,
+				"genre": ['drama','romance']
+			}
+		)
+		var sorted_movies = FAVE_MOVIES.sort(function(a, b){
+			if (a.year>b.year){
+				return 1
+			}else{
+				return -1
+			}
+			
+		});
+		
+		function showMovies(){
+			var ul = document.getElementById("lst_movies");
+			ul.innerHTML='';
+			for (var i=0;i<FAVE_MOVIES.length;i++){
+				var li = document.createElement("li");
+				li.appendChild(document.createTextNode(FAVE_MOVIES[i].title+' - '+FAVE_MOVIES[i].year));
+				ul.appendChild(li);
+			}
+		}
+		
+		window.onload = function() {
+			var full_name= FIRST_NAME.concat(LAST_NAME);
+			document.getElementById("full_name").innerHTML = full_name;
+			alert('welcome to '+full_name+' page.');
+		  
+		};
+	</script>
+</body>
+</html>

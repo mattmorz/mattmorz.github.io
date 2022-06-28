@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Matt Morales Personal Website</title>
+		
+		<style>
+		body {
+			font-family: Arial;
+			padding: 15px;
+		}
+		.h3{
+			text-transform:uppercase;
+		}
+		.lh-1{
+			line-height:1px
+		}
+		p.desc{
+			font-weight:bold;
+			font-size: 16px;
+		}
+		p.short_desc{
+			font-size: 14px;
+		}
+		</style>
+	</head>
+<body>
+
+	<h2>Personal Data</h2>
+	<table>
+		<tr>
+			<td>
+				<img src="images/pic.png" style="width:150px;height:auto"/>
+			</td>
+			<td>
+				<ul style="list-style-type:none;">
+					<li>Name: Edsel Matt O. Morales <li/>
+					<li>Blog: <a href="https://www.snippetbymatt.com/" target="_blank">Personal Blog</a> <li/>
+					<li>E-mail: idsilmat@gmail.com</a> <li/>
+					<li>Mobile Number: <span id="mobile_num"></span><button id="btnShowNum" onclick="showMyNum();">Show</button><li/>
+					<li>Address: Lopez Habitat Village, Baan Km.3, Butuan City, Agusan del Norte</a> <li/>
+				</ul>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<h3 class="h3">Short Bio</h3>
+	<p>Fond of web mapping using open-source libraries, software and framework</p>
+	<h4 class="h3">Facts</h4>
+	<table border="0">
+		<tr>
+			<td>Gender:</td>
+			<td>Male</td>
+		</tr>
+		<tr>
+			<td>Civil Status:</td>
+			<td>Married</td>
+		</tr>
+		<tr>
+			<td>Birthdate:</td>
+			<td>February 20, 1989</td>
+		</tr>
+		<tr>
+			<td>Height:</td>
+			<td>5'7"</td>
+		</tr>
+		<tr>
+			<td>Weight:</td>
+			<td>75 kg.</td>
+		</tr>
+		<tr>
+			<td>Blood Type:</td>
+			<td>0+</td>
+		</tr>
+	</table>
+	<hr/>
+	<h3 class="h3">Education</h3>
+	<div class="lh-1">
+		<p class="desc">Masters of Science in Information Technology (MSIT) - 27 units</p>
+		<p class="short_desc"><i>Caraga State University</i></p>
+		<p class="duration"><small>November 2014 —March 2016, January 2020</small></p>
+	</div>
+	
+	<h3 class="h3">Achievements</h3>
+	<div class="lh-1">
+		<p class="desc">“Interactive Flood Risk Assessment and Forecasting Web App”</p>
+		<p class="short_desc"><i>Edsel Matt Morales, Elbert Moyon and Jojene Santillan
+</i></p>
+		<p class="duration"><small>Bronze Winner, ACRS 2016 - WebCon 6
+</small></p>
+	</div>
+	
+	<h3 class="h3">ILLEGIBILITY</h3>
+	<div class="lh-1">
+		<p class="desc">Career Service Examination - Paper and Pencil Test (Professional Level)
+</p>
+		<p class="short_desc"><i>Agusan National High School, Butuan City, Agusan del Norte
+
+</i></p>
+		<p class="duration"><small>March 12, 2017
+</small></p>
+	</div>
+	
+	<h3 class="h3">WORK Experience</h3>
+	<div class="lh-1">
+		<p class="desc">Caraga State University
+
+</p>
+		<p class="short_desc"><i>Instructor I</i></p>
+		<p class="duration"><small>March 2022 — Present
+</small></p>
+	</div>
+	<a href="https://docs.google.com/document/d/1u__r3dQ_cSuClgmBEh_orFnGNO8EUsTQxgYL63cZQ3I/edit?usp=sharing" target="_blank">Click here for more information</a>
+	
+	<script type="text/javascript">
+		function showMyNum(){
+			var num = document.getElementById("mobile_num");
+			var btn = document.getElementById("btnShowNum");
+			if (num.innerHTML!="0926 713 4457"){
+				num.innerHTML = "0926 713 4457";
+				btn.innerHTML = "Hide"
+			}else{
+				btn.innerHTML = "Show";
+				num.innerHTML = "";
+			}
+		
+		}
+	</script>
+</body>
+</html>
