@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>GeoJSON to MVT with Leaflet</title>
+
+    <link rel="stylesheet" href="./dependencies/leaflet.css" />
+    <link rel="stylesheet" href="./dependencies/bootstrap.css" />
+    <style>
+      #map {
+        width: 100%;
+        height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mt-2">
+      <p class="text-center font-weight-bold">
+        Feature Simplification using Visvalingam–Whyatt algorithm and Tiling Playground
+      </p>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-8">
+            <div id="map"></div>
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+              <p id="fetch">Fetching Data...</p>
+            </div>
+            <div id="zoom-slider" class="mt-3">
+              Zoom Slider: <span id="zoom-value" class="ml-2">7</span>
+              <input
+                id="zoom-range"
+                type="range"
+                min="1"
+                max="18"
+                value="7"
+                class="form-control-range w-75"
+                onchange="setZoom(this.value)"
+              />
+            </div>
+            <p>Layers</p>
+            <div class="checkbox-container">
+              <div class="form-check mb-3 pr-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="true"
+                  id="layer1-checkbox"
+                />
+                <label class="form-check-label text-danger" for="layer1-checkbox">
+                Original (w/o Simplification) <span id="orig_vertices"></span>
+                </label>
+              </div>
+              <div class="form-check mb-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="true"
+                  id="layer2-checkbox"
+                />
+                <label class="form-check-label" for="layer2-checkbox" id="vm">
+                  w/VW Simplification
+                </label>
+              </div>
+              <div class="form-check mb-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="true"
+                  id="layer3-checkbox"
+                />
+                <label class="form-check-label text-success" for="layer2-checkbox">
+                  w/RDP Simplification
+                </label>
+              </div>
+            </div>
+            <div class=" mt-1 ml-0">
+              <p>Select Tolerance (lower means, more simplified)</p>
+              <form class="form-inline" id="myForm">
+                <label class="sr-only" for="slider">Lang</label>
+                <input type="range" class="form-control-range w-75" id="slider" min="0.005" max="1.0" step="0.005" value="0.15" orient="horizontal">             
+                <output class="ml-2" id="sliderValue">0.15</output>            
+              </form>
+            </div>
+            <p id="execution_time" class="text-info"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./dependencies/jquery.js"></script>
+    <script src="./dependencies/leaflet.js"></script>
+    <script src="./dependencies/vectorgrid.js"></script>
+    <script src="./dependencies/turf.js"></script>
+    <script type="text/javascript">
+      const URL = "/try/country.json";
+      const map = L.map("map").setView([9.1204, 125.59], 7);
+      const baseLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      ).addTo(map);
+
+      class EventBus {
+          constructor() {
+              this.listeners = {};
+              this.workerCount = 0;
+              this.finishedWorkers = 0;
+          }
+
+          on(event, listener) {
+              if (!this.listeners[event]) {
+                  this.listeners[event] = [];
+              }
+              this.listeners[event].push(listener);
+          }
+
+          off(event, listener) {
+              if (this.listeners[event]) {
+                  this.listeners[event] = this.listeners[event].filter(
+                      (l) => l !== listener
+                  );
+              }
+          }
+
+          emit(event, data) {
+              if (this.listeners[event]) {
+                  this.listeners[event].forEach((listener) => {
+                      listener(data);
+                      if (event === 'workerFinished') {
+                          this.finishedWorkers++;
+                          if (this.finishedWorkers === this.workerCount) {
+                              this.emit('allWorkersFinished');
+                          }
+                      }
+                  });
+              }
+          }
+
+          addWorker() {
+              this.workerCount++;
+          }
+
+          workerFinished() {
+              this.emit('workerFinished');
+          }
+
+          allWorkersFinished() {
+              this.emit('allWorkersFinished');
+          }
+      }
+
+      var simplifiedDP;
+      var mapBoundingBox;
+      // Initialize the vector grid layer to an empty layer object
+      let layer1 = L.layerGroup().addTo(map);
+      let layer2 = L.layerGroup();
+      let layer3 = L.layerGroup().addTo(map);
+      let GEOJSONDATA;
+      let FILTERED_GEOJSON;
+      const eventBus = new EventBus();
+     
+      const worker1 = new Worker("./worker/geojsonWorker.js");
+      const worker2 = new Worker("./worker/geojsonWorker.js");
+      const worker3 = new Worker("./worker/geojsonWorker.js");
+      const worker4 = new Worker("./worker/geojsonWorker.js");
+      const worker5 = new Worker("./worker/geojsonWorker.js");
+      const worker6 = new Worker("./worker/geojsonWorker.js");
+      const worker7 = new Worker("./worker/geojsonWorker.js");
+      const worker8 = new Worker("./worker/geojsonWorker.js");
+      const worker9 = new Worker("./worker/geojsonWorker.js");
+      const worker10 = new Worker("./worker/geojsonWorker.js");
+      const workers = [worker1, worker2, worker3, worker4, worker5, worker6, worker7, worker8, worker9, worker10];
+
+      function allWorkersFinishedCallback() {
+          console.log("All workers have finished processing.");
+          // Add your further logic here
+      }
+
+      function callSimplifyWorker(GEOJSONDATA,tolerance){
+        const dividedFC = divideFeatureCollection(GEOJSONDATA, 10);
+          const FC = Array();
+          dividedFC.forEach(fc => {
+            FC.push(fc)
+          });
+
+          const tasks = [{
+              workerId: "worker1",
+              task: "task1",
+              data: FC[0]
+            },
+            {
+              workerId: "worker2",
+              task: "task2",
+              data: FC[1]
+            },
+            {
+              workerId: "worker3",
+              task: "task3",
+              data: FC[2]
+            },
+            {
+              workerId: "worker4",
+              task: "task4",
+              data: FC[3]
+            },
+            {
+              workerId: "worker5",
+              task: "task5",
+              data: FC[4]
+            },
+            {
+              workerId: "worker6",
+              task: "task1",
+              data: FC[5]
+            },
+            {
+              workerId: "worker7",
+              task: "task2",
+              data: FC[6]
+            },
+            {
+              workerId: "worker8",
+              task: "task3",
+              data: FC[7]
+            },
+            {
+              workerId: "worker9",
+              task: "task4",
+              data: FC[8]
+            },
+            {
+              workerId: "worker10",
+              task: "task5",
+              data: FC[9]
+            },
+          ];
+
+          for (const worker of workers) {
+           
+            worker.addEventListener('message', (event) => {
+              const {
+                processedData,
+                execution_time,
+                id,
+                tolerance
+              } = event.data;
+              eventBus.addWorker();
+              eventBus.emit(event.data.workerId, {
+                processedData,
+                execution_time,
+                tolerance,
+                id: id
+              });
+
+            });
+
+            worker.onmessage = function(event) {
+              eventBus.workerFinished();
+              createMap(event.data.processedData);
+            };
+            eventBus.allWorkersFinished(allWorkersFinishedCallback);
+          }
+
+          for (let i = 0; i < 10; i++) {
+            const worker = workers[i];
+            const task = tasks[i];
+            worker.postMessage({
+              workerId: task.workerId,
+              task: task.task,
+              data: task.data,
+              tolerance: tolerance,
+              id: i,
+              eventBus: eventBus
+            });
+          }
+      }
+
+
+      // Get the slider element
+      var slider = document.getElementById("slider");
+      slider.addEventListener("change", function() {
+        var sliderValue = this.value;
+        eventBus.off();
+        layer2.clearLayers();
+        callSimplifyWorker(GEOJSONDATA,sliderValue);
+      });
+
+
+      var fetchPrompt = document.getElementById("fetch");
+      fetchData(URL)
+        .then((geojsonData) => {
+          GEOJSONDATA = geojsonData;
+          fetchPrompt.textContent = "GeoJSON Loaded!";
+          callSimplifyWorker(GEOJSONDATA,0.15);
+        })
+        .catch((error) => {
+          fetchPrompt.textContent = "Error!"
+          console.error("Error fetching GeoJSON data:", error);
+        });
+
+      async function fetchData(URL) {
+        const response = await fetch(URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+      }
+
+      function computeTolerance(zoomLevel) {
+          if (zoomLevel >= 1 && zoomLevel <= 5) {
+              return 0.005;
+          } else if (zoomLevel >= 6 && zoomLevel <= 10) {
+              return 0.45;
+          } else if (zoomLevel >= 11 && zoomLevel <= 15) {
+              return 0.85;
+          } else {
+              return 1.0;
+          }
+      }
+
+
+      function divideFeatureCollection(fc, numParts) {
+        const parts = [];
+        for (let i = 0; i < numParts; i++) {
+          parts.push({
+            type: "FeatureCollection",
+            features: fc.features.slice(i * (fc.features.length / numParts), (i + 1) * (fc.features.length / numParts))
+          });
+        }
+        return parts;
+      }
+
+
+      var slider = document.getElementById("slider");
+      var output = document.getElementById("sliderValue");
+      output.innerHTML = slider.value;
+
+      slider.oninput = function() {
+        output.innerHTML = this.value;
+      }
+      //const randomHexCode = () => `#${Math.floor(Math.random() * 0xffffff).toString(16).padEnd(6, "0")}`;
+
+      function createMap(processedData) {
+            layer2.addLayer(L.vectorGrid.slicer(
+            processedData, {
+              rendererFactory: L.canvas.tile,
+              vectorTileLayerStyles: {
+                sliced: {
+                  fillColor: "#fff",
+                  color: "black",//randomHexCode(),
+                  weight: 2,
+                  fill: true,
+                  stroke: true,
+                  fillOpacity: 0.2,
+                },
+              },
+              maxZoom: 22,
+              indexMaxZoom: 5,
+              interactive: true,
+            }
+          )).addTo(map);
+    
+        const layer2Checkbox = document.getElementById("layer2-checkbox");
+        layer2Checkbox.checked = true;
+      }
+
+      const zoomSlider = document.getElementById("zoom-range");
+      const zoomValue = document.getElementById("zoom-value");
+      zoomSlider.addEventListener("input", function(event) {
+        const zoom = parseInt(event.target.value, 10);
+        map.setZoom(zoom);
+        zoomValue.textContent = zoom;
+      });
+
+      var lastRange = "";
+      map.on("zoomend", function() {
+        let zoomLevel = map.getZoom();
+        zoomSlider.value = zoomLevel;
+        zoomValue.textContent = zoomLevel;
+        var range = getRange(zoomLevel);
+        console.log(range)
+        if (range !== lastRange) {
+          lastRange = range;
+          eventBus.off();
+          layer2.clearLayers();
+          let tolerance = computeTolerance(zoomLevel);
+          slider.value = tolerance;
+          output.innerHTML = slider.value;
+
+          callSimplifyWorker(GEOJSONDATA,tolerance);
+        }
+      });
+
+      // Function to get the range based on zoom level
+      function getRange(zoomLevel) {
+          if (zoomLevel >= 1 && zoomLevel <= 5) {
+              return "1-5";
+          } else if (zoomLevel >= 6 && zoomLevel <= 10) {
+              return "6-10";
+          } else if (zoomLevel >= 11 && zoomLevel <= 15) {
+              return "11-15";
+          } else if (zoomLevel >= 16 && zoomLevel <= 24) {
+              return "16-24";
+          } else {
+              return "";
+          }
+      }
+
+      document
+        .getElementById("layer1-checkbox")
+        .addEventListener("change", () => {
+          if (document.getElementById("layer1-checkbox").checked) {
+            map.removeLayer(layer1);
+            layer1 = L.vectorGrid.slicer(
+              GEOJSONDATA, {
+                rendererFactory: L.canvas.tile,
+                vectorTileLayerStyles: {
+                  sliced: {
+                    fillColor: "#444",
+                    color: "red",
+                    weight: 2,
+                    fill: true,
+                    stroke: true,
+                    fillOpacity: 0.2,
+                  },
+                },
+                maxZoom: 22,
+                indexMaxZoom: 5,
+                interactive: true,
+              }
+            ).addTo(map);
+          } else {
+            map.removeLayer(layer1);
+          }
+        });
+      document
+        .getElementById("layer2-checkbox")
+        .addEventListener("change", () => {
+          if (document.getElementById("layer2-checkbox").checked) {
+            if (!map.hasLayer(layer2)) layer2.addTo(map);
+          } else {
+            map.removeLayer(layer2);
+          }
+        });
+      document
+        .getElementById("layer3-checkbox")
+        .addEventListener("change", () => {
+          if (document.getElementById("layer3-checkbox").checked) {
+            const selectElement = document.getElementById("slider");
+            const selectedValue = selectElement.value;
+            //const startTime = performance.now();
+            var simplifiedDP = turf.simplify(GEOJSONDATA, {
+              tolerance: 1,
+              highQuality: true
+            });
+            //const endTime = performance.now();
+            //console.log(endTime - startTime);
+            map.removeLayer(layer3);
+            layer3 = L.vectorGrid.slicer(
+              simplifiedDP, {
+                rendererFactory: L.canvas.tile,
+                vectorTileLayerStyles: {
+                  sliced: {
+                    fillColor: "#fff",
+                    color: "green",
+                    weight: 2,
+                    fill: true,
+                    stroke: true,
+                    fillOpacity: 0.2,
+                  },
+                },
+                maxZoom: 22,
+                indexMaxZoom: 5,
+                interactive: true,
+              }
+            );
+            layer3.addTo(map);
+          } else {
+            map.removeLayer(layer3);
+          }
+        });
+
+      let Bworker = new Worker('./worker/boundingBoxWorker.js');
+
+      function updateBoundingBox() {
+        const mapBounds = map.getBounds();
+        const mapBoundingBox = Array(
+          mapBounds.getSouthWest().lng, mapBounds.getSouthWest().lat,
+          mapBounds.getNorthEast().lng, mapBounds.getNorthEast().lat
+        );
+        Bworker.postMessage({
+          mapBounds: mapBoundingBox,
+          geoJsonData: GEOJSONDATA
+        });
+      }
+      Bworker.onmessage = function(event) {
+        let geojson = event.data;
+        //callSimplifyWorker(geojson);
+      };
+
+    </script>
+  </body>
+</html>

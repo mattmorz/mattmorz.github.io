@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GeoJSON to MVT with Leaflet</title>
+  <link rel="stylesheet" href="./leaflet.css" />
+  <style>
+    #map {
+      width: 800px;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="./leaflet.js"></script>
+  <script src="./vectorgrid.js"></script>
+  <script>
+  const worker = new Worker('web-worker.js');
+
+  function simplifyFeatureWorker(feature, tolerance) {
+    return new Promise((resolve, reject) => {
+      worker.addEventListener('message', (event) => {
+        if (event.data.error) {
+          reject(event.data.error);
+        } else {
+          resolve(event.data.result);
+        }
+      });
+      worker.postMessage({ feature, tolerance });
+    });
+  }
+
+  async function createVectorTiles(url, zoom, tolerance) {
+    const response = await fetch(url);
+    const geojsonData = await response.json();
+
+    // Simplify the GeoJSON data before converting to vector tiles
+    const features = geojsonData.features.map(async (feature) => {
+      const simplifiedFeature = await simplifyFeatureWorker(feature, tolerance);
+      return simplifiedFeature;
+    });
+
+    const simplifiedFeatures = await Promise.all(features);
+
+    const simplifiedGeoJSON = {
+      type: 'FeatureCollection',
+      features: simplifiedFeatures,
+    };
+
+    // Create vector tiles using Leaflet VectorGrid plugin
+    const vectorTileOptions = {
+      maxZoom: 14,
+      vectorTileLayerStyles: {
+        sliced: function (properties, zoom) {
+          // Customize the style for vector tiles (optional)
+          return {
+            fillColor: '#3388ff',
+            fillOpacity: .9,
+            color: '#3388ff',
+            opacity: 1,
+            weight: 2,
+          };
+        },
+      },
+    };
+
+    const vectorTiles = L.vectorGrid.slicer(simplifiedGeoJSON, vectorTileOptions);
+    return vectorTiles;
+  }
+
+
+async function main() {
+  const map = L.map('map').setView([9.1204, 125.59], 7);
+  // Add a basemap (e.g., OpenStreetMap)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+  }).addTo(map);
+
+  const url = '/try/country.json';
+  const zoomLevel = 10;
+  const simplificationTolerance = .001;
+
+  // Fetch GeoJSON data and create vector tiles
+  //const vectorTiles = await createVectorTiles(url, zoomLevel, simplificationTolerance);
+  createVectorTiles(url, zoomLevel, simplificationTolerance).then(vectorTiles => {
+    vectorTiles.addTo(map);
+  }).catch(error => {
+    console.error('Error creating vector tiles:', error);
+  });
+
+
+  console.log('Vector tiles created and displayed on the map.');
+}
+
+// Run the main function when the page loads
+window.onload = main;
+  </script>
+</body>
+</html>

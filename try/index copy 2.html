@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>GeoJSON to MVT with Leaflet</title>
+  <link rel="stylesheet" href="./leaflet.css" />
+  <style>
+    #map {
+      width: 800px;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="./leaflet.js"></script>
+  <script src="./vectorgrid.js"></script>
+  <script type="text/javascript">
+
+const map = L.map('map').setView([9.1204, 125.59], 7);
+
+// Add a basemap (e.g., OpenStreetMap)
+const maxZoom = 18;
+const minZoom = 5;
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: maxZoom,
+  attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Replace 'data/your_geojson_data.json' with the path to your GeoJSON data
+const url = '/try/country.json';
+
+// Set the minimum and maximum simplification tolerance
+const minSimplificationTolerance = 0.0001;
+const maxSimplificationTolerance = 0.01;
+
+// Fetch GeoJSON data and create vector tiles
+fetchGeoJSONData(url, function (geojsonData) {
+  const vectorTiles = createVectorTiles(simplifyGeoJSON(geojsonData, getSimplificationTolerance(map.getZoom(), maxZoom, minZoom)), map.getZoom(), getSimplificationTolerance(map.getZoom(), maxZoom, minZoom));
+
+  // Add the vector tiles to the map using Leaflet VectorGrid plugin
+  vectorTiles.addTo(map);
+
+  console.log('Vector tiles created and displayed on the map.');
+
+  // Add a zoomend event listener to update the vector tiles when the zoom level changes
+  map.on('zoomend', function() {
+    const vectorTiles = createVectorTiles(simplifyGeoJSON(geojsonData, getSimplificationTolerance(map.getZoom(), maxZoom, minZoom)), map.getZoom(), getSimplificationTolerance(map.getZoom(), maxZoom, minZoom));
+    vectorTiles.addTo(map);
+   vectorTiles.bringToFront();
+  });
+});
+
+// Function to calculate the simplification tolerance based on the zoom level
+function getSimplificationTolerance(zoomLevel, maxZoom, minZoom) {
+  const zoomRange = maxZoom - minZoom;
+  const toleranceRange = maxSimplificationTolerance - minSimplificationTolerance;
+  const toleranceFactor = (zoomLevel - minZoom) / zoomRange;
+  const simplificationTolerance = minSimplificationTolerance + (toleranceFactor * toleranceRange);
+  return simplificationTolerance;
+}
+
+// Function to simplify a GeoJSON feature using the Visvalingam-Whyatt algorithm
+function simplifyGeoJSON(geojsonData, tolerance) {
+  if (geojsonData.type === 'FeatureCollection') {
+    return {
+      type: 'FeatureCollection',
+      features: geojsonData.features.map(feature => simplifyFeature(feature, tolerance))
+    };
+  } else if (geojsonData.type === 'Feature') {
+    return {
+      type: 'Feature',
+      geometry: simplifyGeometry(geojsonData.geometry, tolerance),
+      properties: geojsonData.properties
+    };
+  }
+}
+
+
+
+// Function to simplify a GeoJSON geometry using the Visvalingam-Whyatt algorithm
+function simplifyGeometry(geometry, tolerance) {
+  if (geometry.type === 'Point') {
+    return geometry;
+  } else if (geometry.type === 'LineString') {
+    return simplifyLineString(geometry.coordinates, tolerance);
+  } else if (geometry.type === 'Polygon') {
+    return {
+      type: 'Polygon',
+      coordinates: [simplifyRing(geometry.coordinates[0], tolerance)]
+    };
+  } else if (geometry.type === 'MultiPoint') {
+    return {
+      type: 'MultiPoint',
+      coordinates: geometry.coordinates.map(coordinate => simplifyPoint(coordinate, tolerance))
+    };
+  } else if (geometry.type === 'MultiLineString') {
+    return {
+      type: 'MultiLineString',
+      coordinates: geometry.coordinates.map(coordinates => simplifyLineString(coordinates, tolerance))
+    };
+  } else if (geometry.type === 'MultiPolygon') {
+    return {
+      type: 'MultiPolygon',
+      coordinates: geometry.coordinates.map(coordinates => ({
+        type: 'Polygon',
+        coordinates: [simplifyRing(coordinates[0], tolerance)]
+      }))
+    };
+  }
+}
+
+// Function to simplify a GeoJSON feature using the Visvalingam-Whyatt algorithm
+function simplifyFeature(feature, tolerance) {
+  if (feature.geometry.type === 'Point') {
+    return feature;
+  }
+
+  const coords = feature.geometry.coordinates;
+  const simplifiedCoords = simplifyGeometry(feature.geometry, tolerance).coordinates;
+
+  if (feature.geometry.type === 'LineString') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: simplifiedCoords
+      },
+      properties: feature.properties
+    };
+  } else if (feature.geometry.type === 'Polygon') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [simplifiedCoords]
+      },
+      properties: feature.properties
+    };
+  } else if (feature.geometry.type === 'MultiPoint') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'MultiPoint',
+        coordinates: simplifiedCoords
+      },
+      properties: feature.properties
+    };
+  } else if (feature.geometry.type === 'MultiLineString') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'MultiLineString',
+        coordinates: simplifiedCoords
+      },
+      properties: feature.properties
+    };
+  } else if (feature.geometry.type === 'MultiPolygon') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'MultiPolygon',
+        coordinates: simplifiedCoords.map(coordinates => [coordinates])
+      },
+      properties: feature.properties
+    };
+  }
+}
+
+
+// Function to simplify a LineString using the Visvalingam-Whyatt algorithm
+function simplifyLineString(coordinates, tolerance) {
+  const triangles = [];
+  for (let i = 2; i < coordinates.length; i++) {
+    const triangle = [
+      [coordinates[0], coordinates[1]],
+      [coordinates[i - 1], coordinates[i - 2]],
+      [coordinates[i], coordinates[i - 1]]
+    ];
+    triangles.push(triangle);
+  }
+  const areas = triangles.map(triangle => getTriangleArea(triangle));
+  const indices = triangles.map((triangle, i) => i).sort((a, b) => areas[b] - areas[a]);
+  const stack = [];
+  for (let i = 0; i < indices.length; i++) {
+    const index = indices[i];
+    const area = areas[index];
+    if (stack.length === 0 || area > stack[stack.length - 1].area) {
+      stack.push({
+        index: index,
+        area: area
+      });
+    } else {
+      while (stack.length > 0 && area <= stack[stack.length - 1].area) {
+        const top = stack.pop();
+        coordinates.splice(top.index, 2, triangles[top.index][0][0], triangles[top.index][0][1]);
+      }
+      stack.push({
+        index: index,
+        area: area
+      });
+    }
+  }
+  while (stack.length > 0) {
+    const top = stack.pop();
+    coordinates.splice(top.index, 2, triangles[top.index][0][0], triangles[top.index][0][1]);
+  }
+  return coordinates;
+}
+
+// Function to simplify a Point using the Visvalingam-Whyatt algorithm
+function simplifyPoint(coordinate, tolerance) {
+  return coordinate;
+}
+
+// Function to simplify a Ring using the Visvalingam-Whyatt algorithm
+function simplifyRing(coordinates, tolerance) {
+  return simplifyLineString(coordinates, tolerance);
+}
+
+// Function to calculate the area of a triangle
+function getTriangleArea(triangle) {
+  const [p1, p2, p3] = triangle;
+  const dx1 = p2[0] - p1[0];
+  const dy1 = p2[1] - p1[1];
+  const dx2 = p3[0] - p1[0];
+  const dy2 = p3[1] - p1[1];
+  return Math.abs(dx1 * dy2 - dx2 * dy1) / 2;
+}
+
+// Function to create vector tiles from a simplified GeoJSON feature
+function createVectorTiles(geojsonData, zoomLevel, tolerance) {
+  const vectorTileLayer = L.vectorGrid.protobuf(geojsonData, {
+    vectorTileLayerStyles: {
+      fill: {
+        weight: 1,
+        fillOpacity: 0.5,
+        color: 'black'
+      },
+      stroke: {
+        weight: 1,
+        color: 'black'
+      }
+    },
+    rendererFactory: L.svg.tile,
+    interactive: true,
+    tolerance: tolerance
+  }).addTo(map);
+
+  // Set the maxZoom level of the vector tile layer to the current zoom level
+  vectorTileLayer.setMaxZoom(zoomLevel);
+
+  return vectorTileLayer;
+}
+
+// Function to fetch GeoJSON data from a URL
+function fetchGeoJSONData(url, callback) {
+  fetch(url)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(callback);
+}
+
+
+  </script>
+</body>
+</html>
