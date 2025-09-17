@@ -1,0 +1,112 @@
+<!-- DOCTYPE html - defines or tells our browser that this file is an html file. -->
+<!DOCTYPE html>
+
+<!-- html - encloses the html syntax. -->
+<html>
+	<!-- head it actually contains metadata or configuration of our website and is usually not seen in the website. -->
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!--  Specifies the title of your webpage that will be shown when the page is shared on social media. -->
+        <meta property="og:title" content="I coded a game with Zuitt!" />
+        <!-- Provides a brief description of your webpage that will be displayed beneath the title in a social media post. -->
+        <meta property="og:description" content="This Game Development project is powered by Zuitt Coding Bootcamp" />
+        <!-- Specifies the name of the website or the brand associated with the content. This helps identify the source of the content in social media posts. -->
+        <meta property="og:site_name" content="I coded a game with Zuitt!" />
+        <!-- Defines the URL of an image that will be shown alongside the title and description when your webpage is shared. (thumbnail) -->
+        <meta property="og:image" content="https://mattmorz.github.io/dict_js-fcb//images/story-thumbnail-2048.jpg" />
+        <!-- This ensures the image is accessible over a secure connection, which is important for platforms that require HTTPS. -->
+        <meta property="og:image:secure_url" content="https://mattmorz.github.io/dict_js-fcb/" />
+
+
+		<!-- title tag - sets the title of our tab. -->
+		<title>2048</title>
+		
+
+		<!-- Styling or the external styling-->
+		<link rel="stylesheet" type="text/css" href="./style.css">
+	</head>
+
+
+	<!-- body tag contains elements that will be show in our website -->
+	<body>
+		<div class="container">
+			<h1>2048</h1>
+			<h2>Created By: Edsel Matt</h2>
+			<hr>
+			<div class="header-container">
+				<div class="score-container">
+					<div class="score-label">
+						Score
+					</div>
+					<div id ="score">
+						0
+					</div>
+				</div>
+				<div class="share-button-container">
+					<div class="share-label">Share</div>
+					<div class="share-icons">
+						<a href="https://www.facebook.com/sharer/sharer.php?u=https://mattmorz.github.io/dict_js-fcb/" target="_blank">
+							<img src="./images/share_2048-fb.svg" id = "fb-icon"alt="">
+						</a>
+					</div>
+				</div>
+				
+			</div>
+			
+
+			<div id = "board">
+				<!-- First Row -->
+				<!-- <div class = "tile x2">[r0, c0]</div>
+				<div class = "tile x4">[r0, c1]</div>
+				<div class = "tile x8">[r0, c2]</div>
+				<div class = "tile x16">[r0, c3]</div> -->
+
+				<!-- Second Row -->
+				<!-- <div class = "tile x32">[r1, c0]</div>
+				<div class = "tile x64">[r1, c1]</div>
+				<div class = "tile x128">[r1, c2]</div>
+				<div class = "tile x256">[r1, c3]</div> -->
+
+				<!-- Third Row -->
+				<!-- <div class = "tile x512">[r2, c0]</div>
+				<div class = "tile x1024">[r2, c1]</div>
+				<div class = "tile x2048">[r2, c2]</div>
+				<div class = "tile x4096">[r2, c3]</div> -->
+
+				<!-- Fourth Row -->
+				<!-- <div class = "tile x8192">[r3, c0]</div>
+				<div class = "tile">[r3, c1]</div>
+				<div class = "tile">[r3, c2]</div>
+				<div class = "tile">[r3, c3]</div> -->
+			</div>
+		</div>
+		<footer>
+			<a href="https://zuitt.co/?referral=2402-org-ali" target="blank">
+                <i class="fa-solid fa-globe"></i>
+            </a>
+            <a href="https://www.facebook.com/ttamlesde" target="blank">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+            <a href="https://x.com/zuittco" target="blank">
+                <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.instagram.com/zuitt_co/" target="blank">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.com/@zuittco" target="blank">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.youtube.com/@ZuittCo" target="blank">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+		</footer>
+
+		<!-- Font-awesome script -->
+		<script src="https://kit.fontawesome.com/6c08c7fbd7.js" crossorigin="anonymous"></script>
+		<script src = "./logic.js"></script>
+	</body>
+
+</html>
+
